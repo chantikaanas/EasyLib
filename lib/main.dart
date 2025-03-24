@@ -1,4 +1,5 @@
 import 'package:easy_lib/homepage.dart';
+import 'package:easy_lib/kartuanggota.dart';
 import 'package:easy_lib/searchpage.dart';
 import 'package:flutter/material.dart';
 
@@ -15,12 +16,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'EasyLib',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: SearchScreen(),
+      home: HomePage(),
+      initialRoute: '/', // Nanti ganti ke login
+      routes: {
+        '/home': (context) => HomePage(),
+        '/search': (context) => SearchScreen(),
+        '/kartuanggota': (context) => KartuanggotaPage(),
+      },
     );
   }
 }

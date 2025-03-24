@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 final List<CategoryData> categories = [
   CategoryData(Icons.school, 'Pendidikan'),
@@ -41,7 +42,7 @@ class HomePage extends StatelessWidget {
           children: [
             Column(
               children: [
-                header(),
+                const Header(),
                 CategoriesSection(),
                 RecomendationSection(),
               ],
@@ -53,137 +54,147 @@ class HomePage extends StatelessWidget {
   }
 }
 
-Widget header() {
-  return Container(
-    padding: EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: Colors.blue,
-      borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(28),
-        bottomRight: Radius.circular(28),
-      ),
-    ),
-    child: Column(
-      children: [
-        Row(
-          children: [
-            InkWell(
-              onTap: () {
-                print("Profile");
-              },
-              child: CircleAvatar(
-                radius: 30,
-                backgroundImage:
-                    Image.asset('assets/images/profile/profile.png').image,
-              ),
-            ),
-            SizedBox(width: 20),
-            Expanded(
-                child: InkWell(
-              onTap: () {
-                print("Search");
-              },
-              child: Container(
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    SizedBox(width: 12),
-                    Icon(
-                      Icons.search,
-                      color: Colors.grey[400],
-                    ),
-                    SizedBox(width: 8),
-                    Text("Baca buku apa hari ini?",
-                        style: TextStyle(color: Colors.grey[400])),
-                    Spacer(
-                      flex: 1,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Icon(
-                        Icons.settings,
-                        color: Colors.grey[400],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            )),
-          ],
+class Header extends StatefulWidget {
+  const Header({super.key});
+
+  @override
+  State<Header> createState() => _HeaderState();
+}
+
+class _HeaderState extends State<Header> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(28),
+          bottomRight: Radius.circular(28),
         ),
-        SizedBox(height: 20),
-        // <--- Greetings Card --->
-        Container(
-          padding: EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.blue.shade200,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 40,
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              InkWell(
+                onTap: () {
+                  print("Profile");
+                },
+                child: CircleAvatar(
+                  radius: 30,
                   backgroundImage:
                       Image.asset('assets/images/profile/profile.png').image,
                 ),
-                SizedBox(width: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Selamat Datang,",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "Asep Kurniawan!",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: Color(0xFF3F84B6),
-                borderRadius: BorderRadius.circular(10),
               ),
-              child: InkWell(
+              SizedBox(width: 20),
+              Expanded(
+                  child: InkWell(
                 onTap: () {
-                  print("Tunjukan Kartu Anggota");
+                  Navigator.of(context).pushNamed('/search');
                 },
-                child: Center(
-                  child: Text(
-                    "Tunjukan Kartu Anggota",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                child: Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      SizedBox(width: 12),
+                      Icon(
+                        Icons.search,
+                        color: Colors.grey[400],
+                      ),
+                      SizedBox(width: 8),
+                      Text("Baca buku apa hari ini?",
+                          style: GoogleFonts.poppins(color: Colors.grey[400])),
+                      Spacer(
+                        flex: 1,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Icon(
+                          Icons.settings,
+                          color: Colors.grey[400],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )),
+            ],
+          ),
+          SizedBox(height: 20),
+          // <--- Greetings Card --->
+          Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade200,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(children: [
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundImage:
+                        Image.asset('assets/images/profile/profile.png').image,
+                  ),
+                  SizedBox(width: 20),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Selamat Datang,",
+                        style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "Asep Kurniawan!",
+                        style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: Color(0xFF3F84B6),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/kartuanggota');
+                  },
+                  child: Center(
+                    child: Text(
+                      "Tunjukan Kartu Anggota",
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            )
-          ]),
-        ),
-      ],
-    ),
-  );
+              )
+            ]),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 Widget CategoriesSection() {
@@ -197,14 +208,14 @@ Widget CategoriesSection() {
           children: [
             Text(
               'CATEGORIES',
-              style: TextStyle(
+              style: GoogleFonts.poppins(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
             IconButton(
                 onPressed: () {
-                  print("Lihat Semua");
+                  print("Lihat Semua"); // BELUM DI ROUTE KE SEARCH
                 },
                 icon: Icon(Icons.more_horiz)),
           ],
@@ -259,7 +270,7 @@ Widget CartegoryItem(IconData icon, String title) {
           SizedBox(height: 8),
           Text(
             title,
-            style: TextStyle(
+            style: GoogleFonts.poppins(
               color: Colors.black87,
             ),
           ),
@@ -280,7 +291,7 @@ Widget RecomendationSection() {
           children: [
             Text(
               'MUNGKIN KAMU SUKA',
-              style: TextStyle(
+              style: GoogleFonts.poppins(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),

@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home:
-        SearchScreen(), // Langsung masuk ke halaman SearchScreen untuk debugging
-  ));
-}
-
 class SearchScreen extends StatelessWidget {
   final List<String> history = ["Bintang", "Nebula", "Hujan", "Matahari"];
   final List<String> trending = [
@@ -35,8 +27,6 @@ class SearchScreen extends StatelessWidget {
     {'label': 'Self-Help', 'icon': Icons.emoji_objects},
   ];
 
-  SearchScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     // Distribute items between rows (alternating)
@@ -47,7 +37,6 @@ class SearchScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon(Icons.arrow_back, size: 28), // Perbesar icon
         title: Text(
           'Search',
           style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w600),
