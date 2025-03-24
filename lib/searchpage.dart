@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: SearchScreen(), // Langsung masuk ke halaman SearchScreen untuk debugging
-  ));
-}
-
 class SearchScreen extends StatelessWidget {
   final List<String> history = ["Bintang", "Nebula", "Hujan", "Matahari"];
-  final List<String> trending = ["Bintang", "Nebula", "Hujan", "Matahari", "Bulan"];
+  final List<String> trending = [
+    "Bintang",
+    "Nebula",
+    "Hujan",
+    "Matahari",
+    "Bulan"
+  ];
   final List<Map<String, dynamic>> categories = [
     {'label': 'Sci-Fi', 'icon': Icons.rocket},
     {'label': 'Science', 'icon': Icons.school},
@@ -18,13 +17,10 @@ class SearchScreen extends StatelessWidget {
     {'label': 'Horror', 'icon': Icons.mood_bad},
   ];
 
-  SearchScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon(Icons.arrow_back, size: 28), // Perbesar icon
         title: Text(
           'Search',
           style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w600),
@@ -59,8 +55,9 @@ class SearchScreen extends StatelessWidget {
             // Tambahkan jarak sebelum judul "Cari Kategori"
             const SizedBox(height: 30),
             buildSectionTitle('Cari Kategori'),
-            const SizedBox(height: 12), // Tambah jarak antara judul dan tombol kategori
-            
+            const SizedBox(
+                height: 12), // Tambah jarak antara judul dan tombol kategori
+
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -76,14 +73,18 @@ class SearchScreen extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[200],
                     foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16), // Tambah padding
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 16), // Tambah padding
                   ),
                   onPressed: () {},
-                  icon: Icon(categories[index]['icon'], size: 24), // Perbesar icon
+                  icon: Icon(categories[index]['icon'],
+                      size: 24), // Perbesar icon
                   label: Text(
                     categories[index]['label'],
-                    style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),
+                    style: GoogleFonts.poppins(
+                        fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                 );
               },
@@ -115,10 +116,12 @@ class SearchScreen extends StatelessWidget {
           .map((item) => Chip(
                 label: Text(
                   item,
-                  style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500),
+                  style: GoogleFonts.poppins(
+                      fontSize: 14, fontWeight: FontWeight.w500),
                 ),
                 backgroundColor: Colors.grey[200],
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Tambah padding
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 8), // Tambah padding
               ))
           .toList(),
     );

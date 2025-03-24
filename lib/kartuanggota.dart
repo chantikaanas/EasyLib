@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: LibraryCardScreen(),
-  ));
-}
-
-class LibraryCardScreen extends StatelessWidget {
+class KartuanggotaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double cardWidth = screenWidth * 0.9;
-    double cardHeight = cardWidth * 0.55; // Menyesuaikan rasio kartu agar tetap proporsional
+    double cardHeight =
+        cardWidth * 0.6; // Menyesuaikan rasio kartu agar tetap proporsional
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -48,13 +43,13 @@ class LibraryCardScreen extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.person, size: 40, color: Colors.grey),
+                    backgroundImage:
+                        Image.asset('assets/images/profile/profile.png').image,
                   ),
                   SizedBox(height: 10),
                   Text(
                     "ID: 000123",
-                    style: TextStyle(
+                    style: GoogleFonts.poppins(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                       fontSize: 14,
@@ -70,15 +65,17 @@ class LibraryCardScreen extends StatelessWidget {
                   children: [
                     Text(
                       "KARTU ANGGOTA PERPUSTAKAAN",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w500,
                         color: Colors.white,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                     SizedBox(height: 6),
-                    _buildInfoRow("Nama Lengkap", "Asep Kurniawan", Color(0xFF3E78B2)),
-                    _buildInfoRow("Tanggal Bergabung", "25/12/2025", Color(0xFF3E78B2)),
+                    _buildInfoRow(
+                        "Nama Lengkap", "Asep Kurniawan", Color(0xFF3E78B2)),
+                    _buildInfoRow(
+                        "Tanggal Bergabung", "25/12/2025", Color(0xFF3E78B2)),
                     _buildInfoRow("Status", "AKTIF", Color(0xFF3AA86D)),
                   ],
                 ),
@@ -111,10 +108,10 @@ class LibraryCardScreen extends StatelessWidget {
             child: Text(
               value,
               textAlign: TextAlign.left,
-              style: TextStyle(
+              style: GoogleFonts.poppins(
                 color: Colors.white,
                 fontSize: 12,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
