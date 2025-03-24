@@ -1,5 +1,6 @@
 import 'package:easy_lib/homepage.dart';
 import 'package:easy_lib/kartuanggota.dart';
+import 'package:easy_lib/mainPage.dart';
 import 'package:easy_lib/searchpage.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: HomePage(),
+      home: mainPage(),
       initialRoute: '/', // Nanti ganti ke login
       routes: {
         '/home': (context) => HomePage(),

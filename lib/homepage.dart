@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 final List<CategoryData> categories = [
-  CategoryData(Icons.school, 'Pendidikan'),
-  CategoryData(Icons.computer, 'Komputer'),
-  CategoryData(Icons.sports_soccer, 'Olahraga'),
-  CategoryData(Icons.music_note, 'Musik'),
+  CategoryData(Icons.school, 'Science'),
+  CategoryData(Icons.computer, 'Technology'),
+  CategoryData(Icons.sports_soccer, 'Sports'),
+  CategoryData(Icons.music_note, 'Music'),
   CategoryData(Icons.book, 'Novel'),
+  CategoryData(Icons.rocket, 'Sci-Fi'),
+  CategoryData(Icons.favorite, 'Romace'),
+  CategoryData(Icons.mood_bad, 'Horror'),
+  CategoryData(Icons.theater_comedy, 'Drama'),
 ];
 
 class CategoryData {
@@ -44,6 +48,9 @@ class HomePage extends StatelessWidget {
               children: [
                 const Header(),
                 CategoriesSection(),
+                RecomendationSection(),
+                RecomendationSection(),
+                RecomendationSection(),
                 RecomendationSection(),
               ],
             )
@@ -197,48 +204,59 @@ class _HeaderState extends State<Header> {
   }
 }
 
-Widget CategoriesSection() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'CATEGORIES',
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+class CategoriesSection extends StatefulWidget {
+  const CategoriesSection({super.key});
+
+  @override
+  State<CategoriesSection> createState() => _CategoriesSectionState();
+}
+
+class _CategoriesSectionState extends State<CategoriesSection> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'CATEGORIES',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            IconButton(
-                onPressed: () {
-                  print("Lihat Semua"); // BELUM DI ROUTE KE SEARCH
-                },
-                icon: Icon(Icons.more_horiz)),
-          ],
+              IconButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .pushNamed('/search'); // BELUM DI ROUTE KE SEARCH
+                  },
+                  icon: Icon(Icons.more_horiz)),
+            ],
+          ),
         ),
-      ),
-      // <--- Categories List --->
-      SizedBox(
-        height: 120,
-        child: ListView.separated(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          scrollDirection: Axis.horizontal,
-          itemCount: categories.length, // Add categories list
-          separatorBuilder: (context, index) => SizedBox(width: 16),
-          itemBuilder: (context, index) {
-            return CartegoryItem(
-              categories[index].icon,
-              categories[index].title,
-            );
-          },
-        ),
-      )
-    ],
-  );
+        // <--- Categories List --->
+        SizedBox(
+          height: 120,
+          child: ListView.separated(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            scrollDirection: Axis.horizontal,
+            itemCount: categories.length, // Add categories list
+            separatorBuilder: (context, index) => SizedBox(width: 16),
+            itemBuilder: (context, index) {
+              return CartegoryItem(
+                categories[index].icon,
+                categories[index].title,
+              );
+            },
+          ),
+        )
+      ],
+    );
+  }
 }
 
 Widget CartegoryItem(IconData icon, String title) {
