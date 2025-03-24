@@ -8,6 +8,8 @@ void main() {
 }
 
 class LibraryCardScreen extends StatelessWidget {
+  const LibraryCardScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
