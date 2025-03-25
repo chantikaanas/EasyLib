@@ -1,4 +1,5 @@
 import 'package:easy_lib/homepage.dart';
+import 'package:easy_lib/profilePage.dart';
 import 'package:flutter/material.dart';
 
 class mainPage extends StatefulWidget {
@@ -18,6 +19,7 @@ class _mainPageState extends State<mainPage> {
       body: SafeArea(
           child: PageView(
         controller: pageController,
+        physics: NeverScrollableScrollPhysics(),
         onPageChanged: (index) {
           setState(() {
             selected = index;
@@ -28,10 +30,13 @@ class _mainPageState extends State<mainPage> {
             child: HomePage(),
           ),
           Center(
-            child: Text('FaQ'), // Nanti ganti ke FaQ
+            child: Text('Scan Qr'), // Nanti ganti ke FaQ
           ),
           Center(
-            child: Text('Profile'), // Nanti ganti ke Profile
+            child: profilePage(), // Nanti ganti ke FaQ
+          ),
+          Center(
+            child: Text('FaQ'), // Nanti ganti ke Profile
           ),
         ],
       )),
@@ -53,12 +58,16 @@ class _mainPageState extends State<mainPage> {
             label: 'Beranda',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.question_mark_rounded),
-            label: 'FaQ',
+            icon: Icon(Icons.qr_code_scanner_rounded),
+            label: 'Scan',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profil',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.question_mark_rounded),
+            label: 'FaQ',
           ),
         ],
       ),
