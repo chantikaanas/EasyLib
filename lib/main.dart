@@ -1,6 +1,7 @@
 import 'package:easy_lib/homepage.dart';
 import 'package:easy_lib/kartuanggota.dart';
 import 'package:easy_lib/mainPage.dart';
+import 'package:easy_lib/profilePage.dart';
 import 'package:easy_lib/searchpage.dart';
 import 'package:flutter/material.dart';
 
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomePage(),
         '/search': (context) => SearchScreen(),
         '/kartuanggota': (context) => KartuanggotaPage(),
+        '/profile': (context) => profilePage(),
       },
     );
   }

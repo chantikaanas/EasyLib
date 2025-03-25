@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// <-------- DATA -------->
 final List<CategoryData> categories = [
   CategoryData(Icons.school, 'Science'),
   CategoryData(Icons.computer, 'Technology'),
@@ -33,6 +34,7 @@ class RecomendationData {
 
   RecomendationData(this.image, this.title, this.author);
 }
+// <-------- END DATA -------->
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -86,7 +88,7 @@ class _HeaderState extends State<Header> {
             children: [
               InkWell(
                 onTap: () {
-                  print("Profile");
+                  Navigator.of(context).pushNamed('/profile');
                 },
                 child: CircleAvatar(
                   radius: 30,
@@ -247,10 +249,8 @@ class _CategoriesSectionState extends State<CategoriesSection> {
             itemCount: categories.length, // Add categories list
             separatorBuilder: (context, index) => SizedBox(width: 16),
             itemBuilder: (context, index) {
-              return CartegoryItem(
-                categories[index].icon,
-                categories[index].title,
-              );
+              return CategoryItem(
+                  icon: categories[index].icon, title: categories[index].title);
             },
           ),
         )
@@ -259,45 +259,64 @@ class _CategoriesSectionState extends State<CategoriesSection> {
   }
 }
 
-Widget CartegoryItem(IconData icon, String title) {
-  return InkWell(
-    onTap: () {
-      print("Category: $title");
-    },
-    child: Container(
-      width: 120,
-      height: 120,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                blurRadius: 2,
-                spreadRadius: 1,
-                offset: Offset(0, 1)),
-          ]),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 52,
-            color: Colors.black87,
-          ),
-          SizedBox(height: 8),
-          Text(
-            title,
-            style: GoogleFonts.poppins(
-              color: Colors.black87,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
+class CategoryItem extends StatefulWidget {
+  final IconData icon;
+  final String title;
+
+  const CategoryItem({
+    super.key,
+    required this.icon,
+    required this.title,
+  });
+
+  @override
+  State<CategoryItem> createState() => _CategoryItemState();
 }
 
+class _CategoryItemState extends State<CategoryItem> {
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).pushNamed('/search',
+            arguments: widget.title); // BELUM DI ATUR KE SEARCH DAN FILLTER
+      },
+      child: Container(
+        width: 120,
+        height: 120,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  blurRadius: 2,
+                  spreadRadius: 1,
+                  offset: Offset(0, 1)),
+            ]),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              widget.icon,
+              size: 52,
+              color: Colors.black87,
+            ),
+            SizedBox(height: 8),
+            Text(
+              widget.title,
+              style: GoogleFonts.poppins(
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// BELUM DI BUAT STATE
 Widget RecomendationSection() {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
