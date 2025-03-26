@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class profilePage extends StatefulWidget {
-  const profilePage({super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  State<profilePage> createState() => _profilePageState();
+  State<ProfilePage> createState() => _profilePageState();
 }
 
-class _profilePageState extends State<profilePage> {
+class _profilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

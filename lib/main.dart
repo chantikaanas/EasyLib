@@ -1,3 +1,5 @@
+import 'package:easy_lib/auth/login.dart';
+import 'package:easy_lib/auth/register.dart';
 import 'package:easy_lib/homepage.dart';
 import 'package:easy_lib/kartuanggota.dart';
 import 'package:easy_lib/mainPage.dart';
@@ -24,13 +26,15 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: mainPage(),
+      home: LoginPage(),
       initialRoute: '/', // Nanti ganti ke login
       routes: {
         '/home': (context) => HomePage(),
         '/search': (context) => SearchScreen(),
         '/kartuanggota': (context) => KartuanggotaPage(),
-        '/profile': (context) => profilePage(),
+        '/profile': (context) => ProfilePage(),
+        '/main': (context) => MainPage(),
+        '/register': (context) => RegistrationPage(),
       },
     );
   }

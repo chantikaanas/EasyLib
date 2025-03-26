@@ -2,14 +2,14 @@ import 'package:easy_lib/homepage.dart';
 import 'package:easy_lib/profilePage.dart';
 import 'package:flutter/material.dart';
 
-class mainPage extends StatefulWidget {
-  const mainPage({super.key});
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
 
   @override
-  State<mainPage> createState() => _mainPageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _mainPageState extends State<mainPage> {
+class _MainPageState extends State<MainPage> {
   int selected = 0;
   PageController pageController = PageController(initialPage: 0);
 
@@ -33,7 +33,7 @@ class _mainPageState extends State<mainPage> {
             child: Text('Scan Qr'), // Nanti ganti ke FaQ
           ),
           Center(
-            child: profilePage(), // Nanti ganti ke FaQ
+            child: ProfilePage(), // Nanti ganti ke FaQ
           ),
           Center(
             child: Text('FaQ'), // Nanti ganti ke Profile
