@@ -3,6 +3,7 @@ import 'package:easy_lib/auth/register.dart';
 import 'package:easy_lib/homepage.dart';
 import 'package:easy_lib/kartuanggota.dart';
 import 'package:easy_lib/mainPage.dart';
+import 'package:easy_lib/peminjaman.dart';
 import 'package:easy_lib/profilePage.dart';
 import 'package:easy_lib/searchpage.dart';
 import 'package:flutter/material.dart';
@@ -26,8 +27,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: LoginPage(),
-      initialRoute: '/', // Nanti ganti ke login
+      home: const LoginPage(),
+      initialRoute: '/',
       routes: {
         '/home': (context) => HomePage(),
         '/search': (context) => SearchScreen(),
@@ -35,6 +36,8 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => ProfilePage(),
         '/main': (context) => MainPage(),
         '/register': (context) => RegistrationPage(),
+        '/bookdetails': (context) => BookDetailsPage(),
+        '/login': (context) => LoginPage(),
       },
     );
   }

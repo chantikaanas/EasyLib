@@ -17,33 +17,85 @@ class _profilePageState extends State<ProfilePage> {
         backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.of(context).pushNamed('/main');
+          },
+        ),
       ),
       backgroundColor: Colors.grey[200],
-      body: SafeArea(
-        child: Column(children: [
-          Center(
-            child: Header(),
+      body: Stack(
+        children: [
+          SafeArea(
+            child: Column(children: [
+              Center(
+                child: Header(),
+              ),
+              SizedBox(height: 10),
+              Expanded(
+                child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5),
+                    child: ListView(
+                      padding: EdgeInsets.only(bottom: 90),
+                      children: [
+                        Column(children: [
+                          BookCard(),
+                          SizedBox(height: 10),
+                          BookCard(),
+                          SizedBox(height: 10),
+                          BookCard(),
+                          SizedBox(height: 10),
+                          BookCard(),
+                          SizedBox(height: 10),
+                        ])
+                      ],
+                    )),
+              )
+            ]),
           ),
-          SizedBox(height: 10),
-          Expanded(
-            child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5),
-                child: ListView(
-                  children: [
-                    Column(children: [
-                      BookCard(),
-                      SizedBox(height: 10),
-                      BookCard(),
-                      SizedBox(height: 10),
-                      BookCard(),
-                      SizedBox(height: 10),
-                      BookCard(),
-                      SizedBox(height: 10),
-                    ])
-                  ],
-                )),
-          )
-        ]),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    offset: Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/login');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue[700],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  minimumSize: Size(double.infinity, 50),
+                  textStyle: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  foregroundColor: Colors.white,
+                ),
+                child: Text('Sign Out'),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

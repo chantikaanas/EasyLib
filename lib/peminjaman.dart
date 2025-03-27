@@ -1,115 +1,233 @@
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Peminjaman Buku',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: BookDetailsPage(),
-    );
-  }
-}
+import 'package:google_fonts/google_fonts.dart';
 
 class BookDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(250, 250, 250, 1),
       appBar: AppBar(
-        title: Text('Peminjaman Buku'),
-        backgroundColor: Colors.blue,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+        scrolledUnderElevation: 0,
+        title: Text('Peminjaman Buku',
+            style:
+                GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.white,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Book Image
-            Center(
-              child: Image.asset('assets/images/books/book1.png', width: 80, height: 120,), // Replace with your image asset path
-            ),
-            SizedBox(height: 20),
-            // Book Title and Author
-            Text(
-              'Bintang',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Tere Liye',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
-            ),
-            SizedBox(height: 10),
-            // Category and Rating
-            Row(
+      body: Stack(
+        children: [
+          SafeArea(
+            child: ListView(
+              padding: EdgeInsets.only(bottom: 80),
               children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  color: Colors.blue,
-                  child: Text(
-                    'Romance',
-                    style: TextStyle(color: Colors.white),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Book Image
+                      Center(
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.asset(
+                              'assets/images/books/book1.png',
+                              width: 180,
+                              height: 250,
+                              fit: BoxFit.cover,
+                            )),
+                      ),
+                      SizedBox(height: 20),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'Romance',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'Bintang',
+                        style: GoogleFonts.poppins(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'Tere Liye',
+                        style: GoogleFonts.poppins(
+                            fontSize: 18, color: Colors.black),
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.shelves, color: Colors.black, size: 20),
+                            Text('B12.3A',
+                                style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600)),
+                          ]),
+                      SizedBox(height: 20),
+                      // <-------------------- TENTANG BUKU ----------------------->
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Tentang Buku',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.blue[200],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Nomor Panggil',
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Text(
+                                          '01231',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(width: 20),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Ketersediaan',
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Text(
+                                          '15/50',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(width: 20),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Tipe Media',
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Text(
+                                          'Fisik',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 25),
+                          Text(
+                            'Sinopsis',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            'lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(width: 10),
-                Row(
-                  children: List.generate(4, (index) {
-                    return Icon(Icons.star, color: Colors.yellow);
-                  }) +
-                      List.generate(1, (index) {
-                        return Icon(Icons.star_border, color: Colors.yellow);
-                      }),
-                ),
+                )
               ],
             ),
-            SizedBox(height: 20),
-            // About Books Section
-            Text(
-              'About Books',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text('Nomor Panggil: 01231', style: TextStyle(fontSize: 16)),
-            Text('Ketersediaan: 13/50', style: TextStyle(fontSize: 16)),
-            Text('Tipe Media: Fisik', style: TextStyle(fontSize: 16)),
-            SizedBox(height: 10),
-            Text(
-              'Abstract',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 5),
-            Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ornare hendrerit nunc, a ornare neque condimentum vitae. Curabitur sagittis justo elit, nec fermentum ipsum venenatis tempor. Curabitur tincidunt mauris ac imperdiet dapibus. Vivamus augue purus, bibendum.',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 20),
-            // Pinjam (Borrow) Button
-            Center(
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    offset: Offset(0, -2),
+                  ),
+                ],
+              ),
               child: ElevatedButton(
                 onPressed: () {
                   // Show the confirmation dialog
                   _showConfirmationDialog(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  textStyle: TextStyle(fontSize: 18),
+                  backgroundColor: Colors.blue[700],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  minimumSize: Size(double.infinity, 50),
+                  textStyle: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                   foregroundColor: Colors.white,
                 ),
                 child: Text('Pinjam'),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -1,18 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: BookReturnScreen(),
-    );
-  }
-}
-
 class BookReturnScreen extends StatefulWidget {
   @override
   _BookReturnScreenState createState() => _BookReturnScreenState();
@@ -70,15 +57,13 @@ class _BookReturnScreenState extends State<BookReturnScreen> {
       ),
       body: Column(
         children: [
-          if (_currentPage == 0)
-            BookDetailPage(onNext: _nextPage),
+          if (_currentPage == 0) BookDetailPage(onNext: _nextPage),
           if (_currentPage == 1)
             ConfirmationPage(
               onConfirm: _showConfirmationDialog,
               onCancel: _previousPage,
             ),
-          if (_currentPage == 2)
-            SuccessPage(),
+          if (_currentPage == 2) SuccessPage(),
         ],
       ),
     );
@@ -94,8 +79,13 @@ class BookDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('Bintang', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        Image.asset('assets/images/books/book1.png', width: 80, height: 120,),
+        Text('Bintang',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        Image.asset(
+          'assets/images/books/book1.png',
+          width: 80,
+          height: 120,
+        ),
         Text('Tere Liye', style: TextStyle(fontSize: 18)),
         Text('Rating: ★★★☆☆', style: TextStyle(fontSize: 16)),
         ElevatedButton(

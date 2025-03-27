@@ -73,7 +73,9 @@ class LoginPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).pushNamed('/main');
+                    },
                     child: Text(
                       'Masuk',
                       style: GoogleFonts.poppins(
