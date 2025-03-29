@@ -3,6 +3,7 @@ import 'package:easy_lib/kartuanggota.dart';
 import 'package:easy_lib/mainPage.dart';
 import 'package:easy_lib/profilePage.dart';
 import 'package:easy_lib/searchpage.dart';
+import 'package:easy_lib/booklist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         '/search': (context) => SearchScreen(),
         '/kartuanggota': (context) => KartuanggotaPage(),
         '/profile': (context) => ProfilePage(),
+        '/booklist': (context) => BookListPage(),
 
         //  Tambahan routing FAQ
         '/faq': (context) => const FAQPage(),
