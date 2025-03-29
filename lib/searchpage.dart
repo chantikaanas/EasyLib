@@ -10,6 +10,7 @@ class SearchScreen extends StatelessWidget {
     "Matahari",
     "Bulan"
   ];
+
   final List<Map<String, dynamic>> categories = [
     {'label': 'Sci-Fi', 'icon': Icons.rocket},
     {'label': 'Science', 'icon': Icons.school},
@@ -26,6 +27,8 @@ class SearchScreen extends StatelessWidget {
     {'label': 'Poetry', 'icon': Icons.auto_stories},
     {'label': 'Self-Help', 'icon': Icons.emoji_objects},
   ];
+
+  SearchScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

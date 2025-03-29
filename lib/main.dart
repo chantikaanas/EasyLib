@@ -4,14 +4,17 @@ import 'package:easy_lib/mainPage.dart';
 import 'package:easy_lib/profilePage.dart';
 import 'package:easy_lib/searchpage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 //  Tambahkan import untuk halaman FAQ
 import 'package:easy_lib/faq/faq_page.dart';
 import 'package:easy_lib/faq/faq_question_input.dart';
 import 'package:easy_lib/faq/faq_ai_chat.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Load environment variables from .env file
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -28,13 +31,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: mainPage(), // Halaman awal utama
+      home: MainPage(), // Halaman awal utama
       initialRoute: '/',
       routes: {
         '/home': (context) => HomePage(),
         '/search': (context) => SearchScreen(),
         '/kartuanggota': (context) => KartuanggotaPage(),
-        '/profile': (context) => profilePage(),
+        '/profile': (context) => ProfilePage(),
 
         //  Tambahan routing FAQ
         '/faq': (context) => const FAQPage(),

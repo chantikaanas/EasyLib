@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class FAQPage extends StatelessWidget {
   const FAQPage({super.key});
@@ -9,32 +10,31 @@ class FAQPage extends StatelessWidget {
       {
         'question': 'Cara mendaftar anggota?',
         'answer':
-        'Anda dapat mendaftar melalui aplikasi dengan mengisi formulir dan mengaktifkan kartu anggota.'
+            'Anda dapat mendaftar melalui aplikasi dengan mengisi formulir dan mengaktifkan kartu anggota.'
       },
       {
         'question': 'Apakah peminjaman berbayar?',
         'answer':
-        'Tidak. Peminjaman buku melalui aplikasi ini sepenuhnya gratis tanpa biaya apa pun. Anda hanya perlu memiliki kartu anggota yang aktif untuk mulai meminjam.'
+            'Tidak. Peminjaman buku melalui aplikasi ini sepenuhnya gratis tanpa biaya apa pun. Anda hanya perlu memiliki kartu anggota yang aktif untuk mulai meminjam.'
       },
       {
         'question': 'Bagaimana meminjam buku?',
         'answer':
-        'Cukup scan QR kode buku dengan aplikasi dan konfirmasi peminjaman.'
+            'Cukup scan QR kode buku dengan aplikasi dan konfirmasi peminjaman.'
       },
       {
         'question': 'Cara bisa mengganti password?',
-        'answer':
-        'Masuk ke menu Profil > Keamanan > Ganti Password.'
+        'answer': 'Masuk ke menu Profil > Keamanan > Ganti Password.'
       },
       {
         'question': 'Bagaimana cara ganti profil?',
         'answer':
-        'Buka menu Profil dan pilih “Edit Profil” untuk mengganti data Anda.'
+            'Buka menu Profil dan pilih "Edit Profil" untuk mengganti data Anda.'
       },
       {
         'question': 'Apa sanksi jika terlambat dalam pengembalian?',
         'answer':
-        'Anda akan mendapat peringatan dan bisa diblokir sementara jika terlambat berulang.'
+            'Anda akan mendapat peringatan dan bisa diblokir sementara jika terlambat berulang.'
       },
     ];
 
@@ -43,7 +43,11 @@ class FAQPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text('FAQ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        title: Text('FAQ',
+            style: GoogleFonts.poppins(
+                color: Colors.black,
+                fontSize: 20,
+                fontWeight: FontWeight.bold)),
         leading: const Icon(Icons.arrow_back, color: Colors.black),
         centerTitle: true,
       ),
@@ -54,29 +58,46 @@ class FAQPage extends StatelessWidget {
             ...faqList.map((faq) {
               return Card(
                 margin: const EdgeInsets.symmetric(vertical: 8),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                child: ExpansionTile(
-                  tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  title: Text(faq['question']!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(faq['answer']!, style: const TextStyle(color: Colors.black54, height: 1.5)),
-                    ),
-                  ],
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                child: Theme(
+                  data: Theme.of(context).copyWith(
+                    dividerColor: Colors.transparent,
+                  ),
+                  child: ExpansionTile(
+                    tilePadding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    title: Text(faq['question']!,
+                        style:
+                            GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          faq['answer']!,
+                          style: GoogleFonts.poppins(
+                              color: Colors.black54, height: 1.5),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
-            }).toList(),
+            }),
             const SizedBox(height: 16),
             Center(
               child: TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/ask');
+                  Navigator.pushNamed(context, '/chat');
                 },
-                child: const Text(
+                child: Text(
                   'Apakah Anda masih memiliki pertanyaan?',
-                  style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                  style: GoogleFonts.poppins(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ),

@@ -412,6 +412,5 @@ class _RecomendationItemState extends State<RecomendationItem> {
             )),
       ),
     );
-    ;
   }
 }

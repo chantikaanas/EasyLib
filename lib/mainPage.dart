@@ -1,6 +1,8 @@
+import 'package:easy_lib/faq/faq_page.dart';
 import 'package:easy_lib/homepage.dart';
 import 'package:easy_lib/profilePage.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -30,13 +32,13 @@ class _MainPageState extends State<MainPage> {
             child: HomePage(),
           ),
           Center(
-            child: Text('Scan Qr'), // Nanti ganti ke FaQ
+            child: Text('Scan Qr'),
           ),
           Center(
-            child: ProfilePage(), // Nanti ganti ke FaQ
+            child: ProfilePage(),
           ),
           Center(
-            child: Text('FaQ'), // Nanti ganti ke Profile
+            child: FAQPage(),
           ),
         ],
       )),
@@ -46,6 +48,8 @@ class _MainPageState extends State<MainPage> {
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
         currentIndex: selected,
+        selectedLabelStyle: GoogleFonts.poppins(),
+        unselectedLabelStyle: GoogleFonts.poppins(),
         onTap: (index) {
           setState(() {
             selected = index;

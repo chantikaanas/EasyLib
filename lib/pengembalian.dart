@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class BookReturnScreen extends StatefulWidget {
+  const BookReturnScreen({super.key});
+
   @override
   _BookReturnScreenState createState() => _BookReturnScreenState();
 }
@@ -73,7 +75,7 @@ class _BookReturnScreenState extends State<BookReturnScreen> {
 class BookDetailPage extends StatelessWidget {
   final VoidCallback onNext;
 
-  BookDetailPage({required this.onNext});
+  const BookDetailPage({super.key, required this.onNext});
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +103,7 @@ class ConfirmationPage extends StatelessWidget {
   final VoidCallback onConfirm;
   final VoidCallback onCancel;
 
-  ConfirmationPage({required this.onConfirm, required this.onCancel});
+  const ConfirmationPage({super.key, required this.onConfirm, required this.onCancel});
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +123,8 @@ class ConfirmationPage extends StatelessWidget {
 }
 
 class SuccessPage extends StatelessWidget {
+  const SuccessPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(

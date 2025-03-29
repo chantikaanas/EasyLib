@@ -1,7 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'groq_controller.dart'; // Import the GroqController
 
-class FAQAIChatPage extends StatelessWidget {
+class FAQAIChatPage extends StatefulWidget {
   const FAQAIChatPage({super.key});
+
+  @override
+  State<FAQAIChatPage> createState() => _FAQAIChatPageState();
+}
+
+class _FAQAIChatPageState extends State<FAQAIChatPage> {
+  final TextEditingController _controller = TextEditingController();
+  final List<Map<String, String>> _messages = [];
+  late final GroqController _groqController;
+
+  @override
+  void initState() {
+    super.initState();
+    _groqController = GroqController(); // Initialize GroqController
+  }
+
+  void _sendMessage() async {
+    if (_controller.text.trim().isEmpty) return;
+
+    setState(() {
+      _messages.add({'sender': 'user', 'message': _controller.text});
+    });
+
+    final userMessage = _controller.text;
+    _controller.clear();
+
+    // Simulate Groq AI response
+    final aiResponse = await _getAIResponse(userMessage);
+
+    setState(() {
+      _messages.add({'sender': 'ai', 'message': aiResponse});
+    });
+  }
+
+  Future<String> _getAIResponse(String message) async {
+    return await _groqController.getAIResponse(message);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -10,76 +49,90 @@ class FAQAIChatPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text('FAQ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-        leading: const Icon(Icons.arrow_back, color: Colors.black),
+        title: Text(
+          'FAQ',
+          style: GoogleFonts.poppins(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the FAQ page
+          },
+        ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Text(
-                'Apakah terdapat sanksi bila buku yang dipinjam mengalami kerusakan?',
-                style: TextStyle(color: Colors.black54),
-              ),
-            ),
-            const Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Ya, peminjam bertanggung jawab atas kondisi buku yang dipinjam.\n\n',
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                  ),
-                  TextSpan(
-                    text: 'Jika terjadi kerusakan, maka akan dikenakan sanksi sesuai dengan tingkat kerusakan, yang dapat berupa peringatan, denda, atau kewajiban mengganti buku yang rusak. Informasi lebih lanjut mengenai ketentuan ini dapat dilihat pada halaman "Kebijakan Peminjaman".',
-                    style: TextStyle(color: Colors.black87),
-                  )
-                ],
-              ),
-            ),
-            const Spacer(),
-            Row(
-              children: [
-                Expanded(
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(20),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                final message = _messages[index];
+                final isUser = message['sender'] == 'user';
+                return Align(
+                  alignment:
+                      isUser ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    height: 48,
+                    padding: const EdgeInsets.all(16),
+                    margin: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
+                      color: isUser ? Colors.white : Colors.grey[300],
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.black26),
                     ),
-                    child: const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Silakan ajukan pertanyaan Anda!',
-                        style: TextStyle(color: Colors.black45),
+                    child: Text(
+                      message['message']!,
+                      style: GoogleFonts.poppins(
+                        color: isUser ? Colors.black : Colors.black87,
                       ),
                     ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      hintText: 'Silakan ajukan pertanyaan Anda!',
+                      hintStyle: GoogleFonts.poppins(color: Colors.black45),
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    style: GoogleFonts.poppins(),
                   ),
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: _sendMessage,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
                   ),
-                  child: const Text('Kirim'),
-                )
+                  child: Text(
+                    'Kirim',
+                    style: GoogleFonts.poppins(),
+                  ),
+                ),
               ],
-            )
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
