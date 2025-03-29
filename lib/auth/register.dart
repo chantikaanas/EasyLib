@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-//test
+
 void main() {
   runApp(const MyApp());
 }
@@ -9,17 +9,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const RegistrationPage(),
+      home: RegistrationPage(),
     );
   }
 }
 
-class RegistrationPage extends StatelessWidget {
+class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
 
-  Widget buildTextField(String hint, {int maxLines = 1}) {
+  @override
+  State<RegistrationPage> createState() => _RegistrationPageState();
+}
+
+class _RegistrationPageState extends State<RegistrationPage> {
+  final TextEditingController dateController = TextEditingController();
+  String? selectedGender;
+
+  Widget buildTextField(String hint, {int maxLines = 1, TextInputType? inputType}) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -30,12 +38,33 @@ class RegistrationPage extends StatelessWidget {
       ),
       child: TextField(
         maxLines: maxLines,
+        keyboardType: inputType,
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint,
         ),
       ),
     );
+  }
+
+  Future<void> _selectDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(2000),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        dateController.text = "${picked.toLocal()}".split(' ')[0];
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    dateController.dispose();
+    super.dispose();
   }
 
   @override
@@ -48,23 +77,20 @@ class RegistrationPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Tombol back dan judul
+              // Back button and title
               Row(
                 children: const [
                   Icon(Icons.arrow_back),
                   SizedBox(width: 8),
                   Text(
                     'Registrasi Akun',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
               const SizedBox(height: 24),
 
-              // Avatar Placeholder + Icon kamera
+              // Avatar + camera icon
               Stack(
                 alignment: Alignment.bottomRight,
                 children: [
@@ -82,28 +108,74 @@ class RegistrationPage extends StatelessWidget {
                         color: Colors.white,
                       ),
                       padding: const EdgeInsets.all(4),
-                      child: const Icon(
-                        Icons.camera_alt,
-                        size: 20,
-                      ),
+                      child: const Icon(Icons.camera_alt, size: 20),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 24),
 
-              // Form Fields
-              buildTextField("Email"),
-              buildTextField("Kata Sandi"),
+              buildTextField("Email", inputType: TextInputType.emailAddress),
+              buildTextField("Kata Sandi", inputType: TextInputType.visiblePassword),
               buildTextField("Nama"),
-              buildTextField("Tanggal Lahir"),
+
+              // Tanggal Lahir (Date Picker)
+              GestureDetector(
+                onTap: _selectDate,
+                child: AbsorbPointer(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: TextField(
+                      controller: dateController,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Tanggal Lahir",
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
               buildTextField("Institusi"),
-              buildTextField("Jenis Kelamin"),
-              buildTextField("Nomor Telepon"),
+
+              // Jenis Kelamin Dropdown
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: DropdownButtonFormField<String>(
+                  value: selectedGender,
+                  hint: const Text("Jenis Kelamin"),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: "Male", child: Text("Male")),
+                    DropdownMenuItem(value: "Female", child: Text("Female")),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      selectedGender = value;
+                    });
+                  },
+                ),
+              ),
+
+              buildTextField("Nomor Telepon", inputType: TextInputType.phone),
               buildTextField("Alamat", maxLines: 3),
               const SizedBox(height: 20),
 
-              // Tombol Daftar
+              // Button
               SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -117,13 +189,15 @@ class RegistrationPage extends StatelessWidget {
                   onPressed: () {},
                   child: const Text(
                     'Daftar',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white, // <-- warna teks tombol
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
 
-              // Text login
               const Text.rich(
                 TextSpan(
                   text: 'Sudah memiliki akun? ',
@@ -131,9 +205,7 @@ class RegistrationPage extends StatelessWidget {
                   children: [
                     TextSpan(
                       text: 'Login Di sini',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
