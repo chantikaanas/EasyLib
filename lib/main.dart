@@ -1,6 +1,8 @@
 import 'package:easy_lib/homepage.dart';
 import 'package:easy_lib/kartuanggota.dart';
 import 'package:easy_lib/mainPage.dart';
+import 'package:easy_lib/peminjaman.dart';
+import 'package:easy_lib/pengembalian.dart';
 import 'package:easy_lib/profilePage.dart';
 import 'package:easy_lib/searchpage.dart';
 import 'package:easy_lib/booklist.dart';
@@ -40,6 +42,8 @@ class MyApp extends StatelessWidget {
         '/kartuanggota': (context) => KartuanggotaPage(),
         '/profile': (context) => ProfilePage(),
         '/booklist': (context) => BookListPage(),
+        '/bookdetails': (context) => BookDetailsPage(),
+        '/pengembalian': (context) => BookReturnScreen(),
 
         //  Tambahan routing FAQ
         '/faq': (context) => const FAQPage(),
