@@ -28,13 +28,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: mainPage(), // Halaman awal utama
+      home: MainPage(), // Halaman awal utama
       initialRoute: '/',
       routes: {
         '/home': (context) => HomePage(),
         '/search': (context) => SearchScreen(),
         '/kartuanggota': (context) => KartuanggotaPage(),
-        '/profile': (context) => profilePage(),
+        '/profile': (context) => ProfilePage(),
 
         //  Tambahan routing FAQ
         '/faq': (context) => const FAQPage(),
