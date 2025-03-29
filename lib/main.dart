@@ -5,11 +5,6 @@ import 'package:easy_lib/profilePage.dart';
 import 'package:easy_lib/searchpage.dart';
 import 'package:flutter/material.dart';
 
-//Tambahkan import untuk halaman FAQ
-import 'package:easy_lib/faq/faq_page.dart';
-import 'package:easy_lib/faq/faq_question_input.dart';
-import 'package:easy_lib/faq/faq_ai_chat.dart';
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -18,6 +13,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,18 +24,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: mainPage(), // Halaman awal utama
-      initialRoute: '/',
+      home: mainPage(),
+      initialRoute: '/', // Nanti ganti ke login
       routes: {
         '/home': (context) => HomePage(),
         '/search': (context) => SearchScreen(),
         '/kartuanggota': (context) => KartuanggotaPage(),
         '/profile': (context) => profilePage(),
-
-        // Tambahan routing FAQ
-        '/faq': (context) => const FAQPage(),
-        '/ask': (context) => const FAQQuestionInputPage(),
-        '/chat': (context) => const FAQAIChatPage(),
       },
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+//test
 void main() {
   runApp(const MyApp());
 }
@@ -9,9 +9,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: const LoginPage(),
     );
   }
 }
@@ -90,10 +90,7 @@ class LoginPage extends StatelessWidget {
                     onPressed: () {},
                     child: const Text(
                       'Masuk',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white, // Ubah warna teks jadi putih
-                      ),
+                      style: TextStyle(fontSize: 16),
                     ),
                   ),
                 ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+//test
 void main() {
   runApp(const MyApp());
 }
@@ -9,25 +9,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: RegistrationPage(),
+      home: const RegistrationPage(),
     );
   }
 }
 
-class RegistrationPage extends StatefulWidget {
+class RegistrationPage extends StatelessWidget {
   const RegistrationPage({super.key});
 
-  @override
-  State<RegistrationPage> createState() => _RegistrationPageState();
-}
-
-class _RegistrationPageState extends State<RegistrationPage> {
-  final TextEditingController dateController = TextEditingController();
-  String? selectedGender;
-
-  Widget buildTextField(String hint, {int maxLines = 1, TextInputType? inputType}) {
+  Widget buildTextField(String hint, {int maxLines = 1}) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -38,33 +30,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
       ),
       child: TextField(
         maxLines: maxLines,
-        keyboardType: inputType,
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint,
         ),
       ),
     );
-  }
-
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime(2000),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        dateController.text = "${picked.toLocal()}".split(' ')[0];
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    dateController.dispose();
-    super.dispose();
   }
 
   @override
@@ -77,20 +48,23 @@ class _RegistrationPageState extends State<RegistrationPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Back button and title
+              // Tombol back dan judul
               Row(
                 children: const [
                   Icon(Icons.arrow_back),
                   SizedBox(width: 8),
                   Text(
                     'Registrasi Akun',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 24),
 
-              // Avatar + camera icon
+              // Avatar Placeholder + Icon kamera
               Stack(
                 alignment: Alignment.bottomRight,
                 children: [
@@ -108,74 +82,28 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         color: Colors.white,
                       ),
                       padding: const EdgeInsets.all(4),
-                      child: const Icon(Icons.camera_alt, size: 20),
+                      child: const Icon(
+                        Icons.camera_alt,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 24),
 
-              buildTextField("Email", inputType: TextInputType.emailAddress),
-              buildTextField("Kata Sandi", inputType: TextInputType.visiblePassword),
+              // Form Fields
+              buildTextField("Email"),
+              buildTextField("Kata Sandi"),
               buildTextField("Nama"),
-
-              // Tanggal Lahir (Date Picker)
-              GestureDetector(
-                onTap: _selectDate,
-                child: AbsorbPointer(
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 6),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: TextField(
-                      controller: dateController,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Tanggal Lahir",
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
+              buildTextField("Tanggal Lahir"),
               buildTextField("Institusi"),
-
-              // Jenis Kelamin Dropdown
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 6),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: DropdownButtonFormField<String>(
-                  value: selectedGender,
-                  hint: const Text("Jenis Kelamin"),
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                  ),
-                  items: const [
-                    DropdownMenuItem(value: "Male", child: Text("Male")),
-                    DropdownMenuItem(value: "Female", child: Text("Female")),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      selectedGender = value;
-                    });
-                  },
-                ),
-              ),
-
-              buildTextField("Nomor Telepon", inputType: TextInputType.phone),
+              buildTextField("Jenis Kelamin"),
+              buildTextField("Nomor Telepon"),
               buildTextField("Alamat", maxLines: 3),
               const SizedBox(height: 20),
 
-              // Button
+              // Tombol Daftar
               SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -189,15 +117,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   onPressed: () {},
                   child: const Text(
                     'Daftar',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white, // <-- warna teks tombol
-                    ),
+                    style: TextStyle(fontSize: 16),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
 
+              // Text login
               const Text.rich(
                 TextSpan(
                   text: 'Sudah memiliki akun? ',
@@ -205,7 +131,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   children: [
                     TextSpan(
                       text: 'Login Di sini',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),

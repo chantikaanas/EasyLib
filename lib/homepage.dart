@@ -48,12 +48,9 @@ class HomePage extends StatelessWidget {
           children: [
             Column(
               children: [
-                const Header(),
+                Header(),
                 CategoriesSection(),
-                RecomendationSection(),
-                RecomendationSection(),
-                RecomendationSection(),
-                RecomendationSection(),
+                RecommendationSection()
               ],
             )
           ],
@@ -316,77 +313,105 @@ class _CategoryItemState extends State<CategoryItem> {
   }
 }
 
-// BELUM DI BUAT STATE
-Widget RecomendationSection() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'MUNGKIN KAMU SUKA',
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            IconButton(
-                onPressed: () {
-                  print("Buku Recomendation");
-                },
-                icon: Icon(Icons.more_horiz)),
-          ],
-        ),
-      ),
-      // <--- Recomendation List --->
-      SizedBox(
-        height: 170,
-        child: ListView.separated(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          scrollDirection: Axis.horizontal,
-          itemCount: recomendations.length, // Add categories list
-          separatorBuilder: (context, index) => SizedBox(width: 16),
-          itemBuilder: (context, index) {
-            return RecomendationItem(
-              recomendations[index].image,
-              recomendations[index].title,
-            );
-          },
-        ),
-      )
-    ],
-  );
+class RecommendationSection extends StatefulWidget {
+  const RecommendationSection({super.key});
+
+  @override
+  State<RecommendationSection> createState() => _RecommendationSectionState();
 }
 
-Widget RecomendationItem(String image, String title) {
-  return InkWell(
-    onTap: () {
-      print("Recomendation: $title");
-    },
-    child: Container(
-      width: 120,
-      height: 170,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                blurRadius: 2,
-                spreadRadius: 1,
-                offset: Offset(0, 1)),
-          ]),
-      child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.asset(
-            image,
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.cover,
-          )),
-    ),
-  );
+class _RecommendationSectionState extends State<RecommendationSection> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'MUNGKIN KAMU SUKA',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              IconButton(
+                  onPressed: () {
+                    print("Buku Recomendation");
+                  },
+                  icon: Icon(Icons.more_horiz)),
+            ],
+          ),
+        ),
+        // <--- Recomendation List --->
+        SizedBox(
+          height: 170,
+          child: ListView.separated(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            scrollDirection: Axis.horizontal,
+            itemCount: recomendations.length, // Add categories list
+            separatorBuilder: (context, index) => SizedBox(width: 16),
+            itemBuilder: (context, index) {
+              return RecomendationItem(
+                image: recomendations[index].image,
+                title: recomendations[index].title,
+              );
+            },
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class RecomendationItem extends StatefulWidget {
+  final String image;
+  final String title;
+
+  const RecomendationItem({
+    super.key,
+    required this.image,
+    required this.title,
+  });
+
+  @override
+  State<RecomendationItem> createState() => _RecomendationItemState();
+}
+
+class _RecomendationItemState extends State<RecomendationItem> {
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context)
+            .pushNamed('/bookdetails', arguments: widget.title);
+      },
+      child: Container(
+        width: 120,
+        height: 170,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  blurRadius: 2,
+                  spreadRadius: 1,
+                  offset: Offset(0, 1)),
+            ]),
+        child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              widget.image,
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            )),
+      ),
+    );
+    ;
+  }
 }
