@@ -1,3 +1,5 @@
+import 'package:easy_lib/auth/login.dart';
+import 'package:easy_lib/auth/register.dart';
 import 'package:easy_lib/homepage.dart';
 import 'package:easy_lib/kartuanggota.dart';
 import 'package:easy_lib/mainPage.dart';
@@ -34,9 +36,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: MainPage(), // Halaman awal utama
+      home: LoginPage(), // Halaman awal utama
       initialRoute: '/',
       routes: {
+        '/main': (context) => MainPage(),
         '/home': (context) => HomePage(),
         '/search': (context) => SearchScreen(),
         '/kartuanggota': (context) => KartuanggotaPage(),
@@ -44,6 +47,10 @@ class MyApp extends StatelessWidget {
         '/booklist': (context) => BookListPage(),
         '/bookdetails': (context) => BookDetailsPage(),
         '/pengembalian': (context) => BookReturnScreen(),
+
+        // AUTH
+        '/login': (context) => LoginPage(),
+        '/register': (context) => RegistrationPage(),
 
         //  Tambahan routing FAQ
         '/faq': (context) => const FAQPage(),

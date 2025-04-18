@@ -1,20 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: RegistrationPage(),
-    );
-  }
-}
+import 'package:google_fonts/google_fonts.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
@@ -27,7 +13,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController dateController = TextEditingController();
   String? selectedGender;
 
-  Widget buildTextField(String hint, {int maxLines = 1, TextInputType? inputType}) {
+  Widget buildTextField(String hint,
+      {int maxLines = 1, TextInputType? inputType}) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -71,25 +58,21 @@ class _RegistrationPageState extends State<RegistrationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text("Registrasi"),
+        titleTextStyle: GoogleFonts.poppins(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+        ),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Back button and title
-              Row(
-                children: const [
-                  Icon(Icons.arrow_back),
-                  SizedBox(width: 8),
-                  Text(
-                    'Registrasi Akun',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-
               // Avatar + camera icon
               Stack(
                 alignment: Alignment.bottomRight,
@@ -116,7 +99,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
               const SizedBox(height: 24),
 
               buildTextField("Email", inputType: TextInputType.emailAddress),
-              buildTextField("Kata Sandi", inputType: TextInputType.visiblePassword),
+              buildTextField("Kata Sandi",
+                  inputType: TextInputType.visiblePassword),
               buildTextField("Nama"),
 
               // Tanggal Lahir (Date Picker)
@@ -141,9 +125,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ),
                 ),
               ),
-
-              buildTextField("Institusi"),
-
               // Jenis Kelamin Dropdown
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 6),
@@ -198,14 +179,25 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
               const SizedBox(height: 16),
 
-              const Text.rich(
+              Text.rich(
                 TextSpan(
                   text: 'Sudah memiliki akun? ',
-                  style: TextStyle(color: Colors.black87),
+                  style: GoogleFonts.poppins(color: Colors.black87),
                   children: [
                     TextSpan(
-                      text: 'Login Di sini',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      text: 'Login Di sini \n\n',
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold, color: Colors.blue),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.pushNamed(context, '/login');
+                        },
+                    ),
+                    TextSpan(
+                      text: 'Mudah, Cepat, Akses Tanpa Batas!',
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ],
                 ),

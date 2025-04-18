@@ -16,11 +16,36 @@ class MyApp extends StatelessWidget {
 }
 
 class BookListPage extends StatefulWidget {
+  final String? initialCategory;
+
+  const BookListPage({Key? key, this.initialCategory}) : super(key: key);
   @override
   _BookListPageState createState() => _BookListPageState();
 }
 
 class _BookListPageState extends State<BookListPage> {
+  int selectedCategoryIndex = 0;
+  TextEditingController searchController = TextEditingController();
+  String searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    // Handle initial category if provided
+    if (widget.initialCategory != null) {
+      selectedCategoryIndex = categories.indexWhere(
+          (category) => category['label'] == widget.initialCategory);
+      if (selectedCategoryIndex == -1) selectedCategoryIndex = 0;
+    }
+
+    // Add search listener
+    searchController.addListener(() {
+      setState(() {
+        searchQuery = searchController.text.toLowerCase();
+      });
+    });
+  }
+
   final List<Map<String, dynamic>> books = [
     {
       'title': 'Bintang',
@@ -142,20 +167,6 @@ class _BookListPageState extends State<BookListPage> {
     {'label': 'Comedy', 'icon': Icons.sentiment_very_satisfied},
   ];
 
-  int selectedCategoryIndex = 0;
-  TextEditingController searchController = TextEditingController();
-  String searchQuery = '';
-
-  @override
-  void initState() {
-    super.initState();
-    searchController.addListener(() {
-      setState(() {
-        searchQuery = searchController.text.toLowerCase();
-      });
-    });
-  }
-
   @override
   void dispose() {
     searchController.dispose();
@@ -176,7 +187,12 @@ class _BookListPageState extends State<BookListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.arrow_back, color: Colors.black),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         title: Text(
           'List Buku',
           style: GoogleFonts.poppins(

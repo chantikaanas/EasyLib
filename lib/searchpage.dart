@@ -1,3 +1,4 @@
+import 'package:easy_lib/booklist.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -12,6 +13,7 @@ class SearchScreen extends StatelessWidget {
   ];
 
   final List<Map<String, dynamic>> categories = [
+    {'label': 'All', 'icon': Icons.category},
     {'label': 'Sci-Fi', 'icon': Icons.rocket},
     {'label': 'Science', 'icon': Icons.school},
     {'label': 'Romance', 'icon': Icons.favorite},
@@ -22,10 +24,6 @@ class SearchScreen extends StatelessWidget {
     {'label': 'History', 'icon': Icons.history},
     {'label': 'Adventure', 'icon': Icons.explore},
     {'label': 'Comedy', 'icon': Icons.sentiment_very_satisfied},
-    {'label': 'Mystery', 'icon': Icons.help_outline},
-    {'label': 'Thriller', 'icon': Icons.psychology},
-    {'label': 'Poetry', 'icon': Icons.auto_stories},
-    {'label': 'Self-Help', 'icon': Icons.emoji_objects},
   ];
 
   SearchScreen({super.key});
@@ -83,12 +81,12 @@ class SearchScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: categories
-                        .sublist(0, categories.length ~/ 2)
+                        .sublist(0, categories.length ~/ 1.5)
                         .map((category) {
                       return Padding(
                         padding: const EdgeInsets.only(right: 10.0),
                         child: _buildCategoryItem(
-                            category['icon'], category['label']),
+                            context, category['icon'], category['label']),
                       );
                     }).toList(),
                   ),
@@ -100,7 +98,7 @@ class SearchScreen extends StatelessWidget {
                       return Padding(
                         padding: const EdgeInsets.only(right: 10.0),
                         child: _buildCategoryItem(
-                            category['icon'], category['label']),
+                            context, category['icon'], category['label']),
                       );
                     }).toList(),
                   ),
@@ -145,20 +143,30 @@ class SearchScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryItem(IconData icon, String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 20), // Ukuran icon disesuaikan agar sejajar
-          const SizedBox(width: 8), // Jarak antara icon dan teks
-          Text(label, style: const TextStyle(fontSize: 16)),
-        ],
+  Widget _buildCategoryItem(BuildContext context, IconData icon, String label) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BookListPage(initialCategory: label),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          border: Border.all(color: const Color(0xFFE0E0E0)),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 20),
+            const SizedBox(width: 8),
+            Text(label, style: const TextStyle(fontSize: 16)),
+          ],
+        ),
       ),
     );
   }

@@ -42,12 +42,6 @@ class _profilePageState extends State<ProfilePage> {
                         Column(children: [
                           BookCard(),
                           SizedBox(height: 10),
-                          BookCard(),
-                          SizedBox(height: 10),
-                          BookCard(),
-                          SizedBox(height: 10),
-                          BookCard(),
-                          SizedBox(height: 10),
                         ])
                       ],
                     )),

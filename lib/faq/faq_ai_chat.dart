@@ -126,7 +126,9 @@ class _FAQAIChatPageState extends State<FAQAIChatPage> {
                   ),
                   child: Text(
                     'Kirim',
-                    style: GoogleFonts.poppins(),
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],

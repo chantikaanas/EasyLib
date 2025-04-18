@@ -118,13 +118,6 @@ class _HeaderState extends State<Header> {
                       Spacer(
                         flex: 1,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Icon(
-                          Icons.settings,
-                          color: Colors.grey[400],
-                        ),
-                      )
                     ],
                   ),
                 ),

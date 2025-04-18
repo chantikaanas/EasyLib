@@ -1,20 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: LoginPage(),
-    );
-  }
-}
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -52,7 +38,7 @@ class LoginPage extends StatelessWidget {
                   child: const TextField(
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Nama Pengguna',
+                      hintText: 'Email Pengguna',
                     ),
                   ),
                 ),
@@ -87,34 +73,40 @@ class LoginPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    onPressed: () {},
-                    child: const Text(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed('/main');
+                    },
+                    child: Text(
                       'Masuk',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white, // Ubah warna teks jadi putih
-                      ),
+                      style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
 
-                // Teks daftar dan slogan
-                const Text.rich(
+                Text.rich(
                   TextSpan(
                     text: 'Belum memiliki akun? ',
-                    style: TextStyle(color: Colors.black87),
+                    style: GoogleFonts.poppins(
+                      color: Colors.black87,
+                    ),
                     children: [
                       TextSpan(
-                        text: 'Daftar Di sini\n',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        text: 'Daftar Di sini\n\n',
+                        style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold, color: Colors.blue),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.pushNamed(context, '/register');
+                          },
                       ),
                       TextSpan(
-                        text: 'Your Library, Anytime, Anywhere!',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                        text: 'Mudah, Cepat, Akses Tanpa Batas!',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ],

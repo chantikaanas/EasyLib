@@ -1,3 +1,4 @@
+import 'package:easy_lib/QrScan.dart';
 import 'package:easy_lib/faq/faq_page.dart';
 import 'package:easy_lib/homepage.dart';
 import 'package:easy_lib/profilePage.dart';
@@ -32,7 +33,7 @@ class _MainPageState extends State<MainPage> {
             child: HomePage(),
           ),
           Center(
-            child: Text('Scan Qr'),
+            child: QrScanPage(),
           ),
           Center(
             child: ProfilePage(),
