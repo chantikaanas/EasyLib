@@ -16,13 +16,11 @@ class LoginPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Lingkaran biru di atas
                 Container(
-                  width: 120,
-                  height: 120,
-                  decoration: const BoxDecoration(
-                    color: Colors.blue,
-                    shape: BoxShape.circle,
+                  width: 150,
+                  height: 150,
+                  child: CircleAvatar(
+                    backgroundImage: AssetImage('assets/images/LOGO.png'),
                   ),
                 ),
                 const SizedBox(height: 40),

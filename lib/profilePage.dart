@@ -150,8 +150,7 @@ class _HeaderState extends State<Header> {
               SizedBox(height: 20),
               InkWell(
                 onTap: () {
-                  print('Ubah Profil');
-                  //Navigator.pushNamed(context, '/editprofile');
+                  Navigator.pushNamed(context, '/editprofile');
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
