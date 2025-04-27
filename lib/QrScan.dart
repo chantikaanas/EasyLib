@@ -31,15 +31,6 @@ class _QrScanPageState extends State<QrScanPage> {
               ),
             ),
           ),
-          Expanded(
-            flex: 1,
-            child: Center(
-              child: Text(
-                'Result : $result',
-                style: const TextStyle(fontSize: 20),
-              ),
-            ),
-          ),
         ],
       ),
     );
