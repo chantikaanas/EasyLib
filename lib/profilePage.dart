@@ -129,7 +129,7 @@ class _HeaderState extends State<Header> {
               CircleAvatar(
                 radius: 50,
                 backgroundImage:
-                    Image.asset('assets/images/profile/profile.png').image,
+                    Image.asset('assets/images/profile/Profile.png').image,
               ),
               SizedBox(height: 10),
               Text(

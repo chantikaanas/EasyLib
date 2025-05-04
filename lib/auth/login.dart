@@ -17,10 +17,11 @@ class LoginPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  width: 150,
-                  height: 150,
-                  child: CircleAvatar(
-                    backgroundImage: AssetImage('assets/images/LOGO.png'),
+                  width: 500,
+                  height: 120,
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    fit: BoxFit.cover,
                   ),
                 ),
                 const SizedBox(height: 40),

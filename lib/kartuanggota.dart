@@ -46,7 +46,7 @@ class KartuanggotaPage extends StatelessWidget {
                   CircleAvatar(
                     radius: 40,
                     backgroundImage:
-                        Image.asset('assets/images/profile/profile.png').image,
+                        Image.asset('assets/images/profile/Profile.png').image,
                   ),
                   SizedBox(height: 10),
                   Text(

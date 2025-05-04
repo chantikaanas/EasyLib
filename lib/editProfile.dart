@@ -87,7 +87,7 @@ class _EditprofileState extends State<Editprofile> {
                           radius: 70,
                           backgroundImage: _image != null
                               ? FileImage(_image!)
-                              : AssetImage('assets/images/profile/profile.png'),
+                              : AssetImage('assets/images/profile/Profile.png'),
                         ),
                       ),
                       Positioned(

@@ -99,7 +99,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         radius: 60,
                         backgroundImage: _image != null
                             ? FileImage(_image!)
-                            : const AssetImage('assets/images/LOGO.png')),
+                            : const AssetImage(
+                                    'assets/images/profile/Profile.png')
+                                as ImageProvider),
                   ),
                   Positioned(
                     right: 4,
