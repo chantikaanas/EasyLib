@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:io' show Platform, HttpClient;
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart' as connect;
@@ -12,8 +12,9 @@ class AuthBridge {
   static Dio? _dio;
 
   // API URL Configuration - matching what's in JavaScript service
-  static const String _baseUrl =
-      'http://localhost:8000/api'; // Use your actual server IP if not testing on localhost
+  static String _baseUrl = Platform.isAndroid
+      ? 'http://10.0.2.2:8000/api'
+      : 'http://localhost:8000/api'; // Use your actual server IP if not testing on localhost !!ANDROID: 10.0.2.2
   static const String _loginEndpoint = '/login';
   static const String _registerEndpoint = '/register';
   static const String _logoutEndpoint = '/logout';

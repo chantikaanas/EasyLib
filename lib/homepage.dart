@@ -1,3 +1,5 @@
+import 'package:easy_lib/models/category.dart';
+import 'package:easy_lib/services/catagories_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -204,6 +206,29 @@ class CategoriesSection extends StatefulWidget {
 }
 
 class _CategoriesSectionState extends State<CategoriesSection> {
+  List<Category> categories = [];
+  bool isLoading = true;
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    try {
+      final loadedCategories = await CategoryService.getCategories();
+      setState(() {
+        categories = loadedCategories;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading categories: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -239,8 +264,9 @@ class _CategoriesSectionState extends State<CategoriesSection> {
             itemCount: categories.length, // Add categories list
             separatorBuilder: (context, index) => SizedBox(width: 16),
             itemBuilder: (context, index) {
+              final category = categories[index];
               return CategoryItem(
-                  icon: categories[index].icon, title: categories[index].title);
+                  icon: category.icon, title: category.nama_kategori);
             },
           ),
         )
