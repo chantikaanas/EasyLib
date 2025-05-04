@@ -2,15 +2,18 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/io_client.dart';
+import 'package:http/io_client.dart' as connect;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
 
 /// This class provides a bridge to connect with the JavaScript AuthService functionality
 /// It provides authentication features by making API calls to the Laravel backend
 class AuthBridge {
+  static Dio? _dio;
+
   // API URL Configuration - matching what's in JavaScript service
-  // Update with your actual backend URL - avoid using ngrok URLs if possible
-  static const String _baseUrl = 'https://your-backend-url.com/api';
+  static const String _baseUrl =
+      'http://localhost:8000/api'; // Use your actual server IP if not testing on localhost
   static const String _loginEndpoint = '/login';
   static const String _registerEndpoint = '/register';
   static const String _logoutEndpoint = '/logout';
@@ -24,36 +27,60 @@ class AuthBridge {
   // Set auth token in headers
   static void _setAuthToken(String token) {
     _headers['Authorization'] = 'Bearer $token';
+    _dio?.options.headers['Authorization'] = 'Bearer $token';
   }
 
-  // Create a custom HTTP client with proper timeout settings
+  // Initialize Dio without cookie support
+  static Future<Dio> _getDio() async {
+    if (_dio == null) {
+      _dio = Dio(BaseOptions(
+        baseUrl: _baseUrl.split('/api')[0], // Base URL without /api
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        headers: _headers,
+      ));
+
+      // Add logging interceptor for debugging
+      _dio!.interceptors.add(LogInterceptor(
+        request: true,
+        requestHeader: true,
+        requestBody: true,
+        responseHeader: true,
+        responseBody: true,
+        error: true,
+      ));
+
+      print('Dio client initialized to connect to: ${_dio!.options.baseUrl}');
+    }
+    return _dio!;
+  }
+
+  // Create a standard HTTP client (for backward compatibility)
   static http.Client _createClient() {
     final client = HttpClient()
       ..connectionTimeout = const Duration(seconds: 30)
       ..badCertificateCallback = (cert, host, port) => true; // For dev only
 
-// Print some debug info to help diagnose issues
     print('Creating HTTP client to connect to: $_baseUrl');
-    return http.IOClient(client);
+    return connect.IOClient(client);
   }
 
-  // Login method - compatible with JS AuthService.login()
+  // Login method using Dio without cookie support
   static Future<Map<String, dynamic>> login(
       String email, String password) async {
-    final client = _createClient();
     try {
-      final response = await client
-          .post(
-            Uri.parse('$_baseUrl$_loginEndpoint'),
-            headers: _headers,
-            body: jsonEncode({
-              'email': email,
-              'password': password,
-            }),
-          )
-          .timeout(const Duration(seconds: 15));
+      final dio = await _getDio();
+      final response = await dio.post(
+        '/api$_loginEndpoint',
+        data: {
+          'email': email,
+          'password': password,
+        },
+      );
 
-      final responseData = jsonDecode(response.body);
+      print('Response status code: ${response.statusCode}');
+
+      final responseData = response.data;
 
       if (response.statusCode == 200) {
         // Save token and user data
@@ -72,14 +99,20 @@ class AuthBridge {
           'errors': responseData['errors'],
         };
       }
+    } on DioException catch (e) {
+      print('Login error: ${e.toString()}');
+      final responseData = e.response?.data;
+      return {
+        'success': false,
+        'message': responseData?['message'] ?? 'Network error: ${e.toString()}',
+        'errors': responseData?['errors'],
+      };
     } catch (e) {
       print('Login error: ${e.toString()}');
       return {
         'success': false,
         'message': 'Network error: ${e.toString()}',
       };
-    } finally {
-      client.close();
     }
   }
 

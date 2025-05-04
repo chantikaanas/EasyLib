@@ -4,39 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'services/auth_bridge.dart';
 
-// ---------------------------- DATA
-class User {
-  final String name;
-  final String email;
-  final String phone;
-  final String address;
-  final DateTime lahir;
-  final DateTime joined;
-  final String profileImage;
-
-  User({
-    required this.name,
-    required this.email,
-    required this.phone,
-    required this.lahir,
-    required this.joined,
-    required this.address,
-    required this.profileImage,
-  });
-}
-
-final User userData = User(
-  name: 'Asep Kurniawan',
-  email: 'asep.kur@gmail.com',
-  phone: '081234567890',
-  lahir: DateTime(2003, 12, 25),
-  joined: DateTime(2025, 1, 12),
-  address: 'Jl. satuduatiga No.123, Sukamaju, Depok',
-  profileImage: 'assets/images/profile/profile.png',
-);
-
-// ------------------------ END DATA
 class Editprofile extends StatefulWidget {
   const Editprofile({super.key});
 
@@ -47,6 +16,33 @@ class Editprofile extends StatefulWidget {
 class _EditprofileState extends State<Editprofile> {
   File? _image;
   final picker = ImagePicker();
+  Map<String, dynamic>? userData;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final isAuth = await AuthBridge.isAuthenticated();
+    if (!isAuth) {
+      // If not authenticated, redirect to login
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/login');
+      }
+      return;
+    }
+
+    final user = await AuthBridge.getCurrentUser();
+    if (mounted) {
+      setState(() {
+        userData = user;
+        isLoading = false;
+      });
+    }
+  }
 
   Future getImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -67,63 +63,66 @@ class _EditprofileState extends State<Editprofile> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () {
-              Navigator.of(context).pushNamed('/main');
+              Navigator.of(context).pushNamed('/profile');
             },
           ),
         ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: Stack(
-                    alignment: Alignment.center,
+        body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : SafeArea(
+                child: SingleChildScrollView(
+                  child: Column(
                     children: [
-                      GestureDetector(
-                        onTap: getImage,
-                        child: CircleAvatar(
-                          radius: 70,
-                          backgroundImage: _image != null
-                              ? FileImage(_image!)
-                              : AssetImage('assets/images/profile/Profile.png'),
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: getImage,
+                              child: CircleAvatar(
+                                radius: 70,
+                                backgroundImage: _image != null
+                                    ? FileImage(_image!)
+                                    : AssetImage(
+                                        'assets/images/profile/Profile.png') as ImageProvider,
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 130,
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Positioned(
-                        bottom: 0,
-                        right: 130,
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                          ),
+                      SizedBox(height: 30),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: DataUser(
+                          userData: userData!,
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ),
-                SizedBox(height: 30),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  child: DataUser(
-                    userData: userData,
-                  ),
-                )
-              ],
-            ),
-          ),
-        ));
+              ));
   }
 }
 
 class DataUser extends StatefulWidget {
-  final User userData;
+  final Map<String, dynamic> userData;
   const DataUser({super.key, required this.userData});
 
   @override
@@ -201,6 +200,31 @@ class _DataUserState extends State<DataUser> {
 
   @override
   Widget build(BuildContext context) {
+    // Convert string date to DateTime if available, otherwise use defaults
+    DateTime joinedDate;
+    DateTime birthDate;
+
+    try {
+      joinedDate = widget.userData['created_at'] != null
+          ? DateTime.parse(widget.userData['created_at'])
+          : DateTime.now();
+    } catch (e) {
+      joinedDate = DateTime.now();
+    }
+
+    try {
+      birthDate = widget.userData['date_of_birth'] != null
+          ? DateTime.parse(widget.userData['date_of_birth'])
+          : DateTime(2000, 1, 1);
+    } catch (e) {
+      birthDate = DateTime(2000, 1, 1);
+    }
+
+    final name = widget.userData['name'] ?? 'User';
+    final email = widget.userData['email'] ?? 'email@example.com';
+    final phone = widget.userData['phone_number'] ?? '';
+    final address = widget.userData['address'] ?? '';
+
     return Container(
       padding: EdgeInsets.all(20),
       child: Column(
@@ -216,7 +240,7 @@ class _DataUserState extends State<DataUser> {
                       fontWeight: FontWeight.bold,
                     )),
                 SizedBox(height: 5),
-                Text(widget.userData.name,
+                Text(name,
                     style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -235,7 +259,7 @@ class _DataUserState extends State<DataUser> {
                       fontWeight: FontWeight.bold,
                     )),
                 SizedBox(height: 5),
-                Text(widget.userData.email,
+                Text(email,
                     style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -254,7 +278,7 @@ class _DataUserState extends State<DataUser> {
                       fontWeight: FontWeight.bold,
                     )),
                 SizedBox(height: 5),
-                Text(DateFormat('dd/MM/yyyy').format(widget.userData.joined),
+                Text(DateFormat('dd/MM/yyyy').format(joinedDate),
                     style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -273,7 +297,7 @@ class _DataUserState extends State<DataUser> {
                       fontWeight: FontWeight.bold,
                     )),
                 SizedBox(height: 5),
-                Text(DateFormat('dd/MM/yyyy').format(widget.userData.lahir),
+                Text(DateFormat('dd/MM/yyyy').format(birthDate),
                     style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -287,7 +311,7 @@ class _DataUserState extends State<DataUser> {
             onTap: () {
               _showEditDialog(
                 'Nomor Telepon',
-                widget.userData.phone,
+                phone,
                 (newValue) {
                   // Here you would typically update the data in your backend
                   print('Nomor Telepon: $newValue');
@@ -303,7 +327,7 @@ class _DataUserState extends State<DataUser> {
                       fontWeight: FontWeight.bold,
                     )),
                 SizedBox(height: 5),
-                Text(widget.userData.phone,
+                Text(phone,
                     style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -317,7 +341,7 @@ class _DataUserState extends State<DataUser> {
             onTap: () {
               _showEditDialog(
                 'Alamat',
-                widget.userData.address,
+                address,
                 (newValue) {
                   // Here you would typically update the data in your backend
                   print('Alamat: $newValue');
@@ -333,7 +357,7 @@ class _DataUserState extends State<DataUser> {
                       fontWeight: FontWeight.bold,
                     )),
                 SizedBox(height: 5),
-                Text(widget.userData.address,
+                Text(address,
                     style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
