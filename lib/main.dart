@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
 
         // AUTH
         '/login': (context) => LoginPage(),
-        '/register': (context) => RegistrationPage(),
+        '/register': (context) => RegisterPage(),
 
         //  Tambahan routing FAQ
         '/faq': (context) => const FAQPage(),
