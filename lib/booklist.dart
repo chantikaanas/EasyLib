@@ -6,6 +6,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,7 +20,7 @@ class MyApp extends StatelessWidget {
 class BookListPage extends StatefulWidget {
   final String? initialCategory;
 
-  const BookListPage({Key? key, this.initialCategory}) : super(key: key);
+  const BookListPage({super.key, this.initialCategory});
   @override
   _BookListPageState createState() => _BookListPageState();
 }

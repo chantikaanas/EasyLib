@@ -5,7 +5,7 @@ class FAQQuestionInputPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _controller = TextEditingController();
+    final TextEditingController controller = TextEditingController();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),
@@ -34,7 +34,7 @@ class FAQQuestionInputPage extends StatelessWidget {
                 border: Border.all(color: Colors.black54),
               ),
               child: TextField(
-                controller: _controller,
+                controller: controller,
                 maxLines: 5,
                 decoration: const InputDecoration(
                     border: InputBorder.none,

@@ -16,7 +16,7 @@ class LoginPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
+                SizedBox(
                   width: 150,
                   height: 150,
                   child: CircleAvatar(
