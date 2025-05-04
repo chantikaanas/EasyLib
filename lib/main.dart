@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: Editprofile(), // Halaman awal utama
+      home: LoginPage(), // Halaman awal utama
       initialRoute: '/',
       routes: {
         '/main': (context) => MainPage(),
