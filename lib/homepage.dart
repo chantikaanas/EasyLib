@@ -1,28 +1,10 @@
 import 'package:easy_lib/models/category.dart';
+import 'package:easy_lib/services/auth_bridge.dart';
 import 'package:easy_lib/services/catagories_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // <-------- DATA -------->
-final List<CategoryData> categories = [
-  CategoryData(Icons.school, 'Science'),
-  CategoryData(Icons.computer, 'Technology'),
-  CategoryData(Icons.sports_soccer, 'Sports'),
-  CategoryData(Icons.music_note, 'Music'),
-  CategoryData(Icons.book, 'Novel'),
-  CategoryData(Icons.rocket, 'Sci-Fi'),
-  CategoryData(Icons.favorite, 'Romace'),
-  CategoryData(Icons.mood_bad, 'Horror'),
-  CategoryData(Icons.theater_comedy, 'Drama'),
-];
-
-class CategoryData {
-  final IconData icon;
-  final String title;
-
-  CategoryData(this.icon, this.title);
-}
-
 final List<RecomendationData> recomendations = [
   RecomendationData('assets/images/books/book1.png', 'Bintang', 'Tere Liye'),
   RecomendationData('assets/images/books/book2.png', 'Bulan', 'Tere Liye'),
@@ -70,6 +52,35 @@ class Header extends StatefulWidget {
 }
 
 class _HeaderState extends State<Header> {
+  String userName = '';
+  String? profilePicture;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final userData = await AuthBridge.getCurrentUser();
+      if (userData != null && mounted) {
+        setState(() {
+          userName = userData['name'] ?? 'User';
+          profilePicture = userData['profile_picture'];
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error loading user data: $e');
+      setState(() {
+        userName = 'User';
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -91,8 +102,10 @@ class _HeaderState extends State<Header> {
                 },
                 child: CircleAvatar(
                   radius: 30,
-                  backgroundImage:
-                      Image.asset('assets/images/profile/Profile.png').image,
+                  backgroundImage: profilePicture != null
+                      ? NetworkImage(profilePicture!)
+                      : AssetImage('assets/images/profile/Profile.png')
+                          as ImageProvider,
                 ),
               ),
               SizedBox(width: 20),
@@ -138,10 +151,10 @@ class _HeaderState extends State<Header> {
               Row(
                 children: [
                   CircleAvatar(
-                    radius: 40,
-                    backgroundImage:
-                        Image.asset('assets/images/profile/Profile.png').image,
-                  ),
+                      radius: 40,
+                      backgroundImage: profilePicture != null
+                          ? NetworkImage(profilePicture!)
+                          : AssetImage('assets/images/profile/Profile.png')),
                   SizedBox(width: 20),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,7 +167,7 @@ class _HeaderState extends State<Header> {
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "Asep Kurniawan!",
+                        isLoading ? "Loading . . ." : "$userName!",
                         style: GoogleFonts.poppins(
                             color: Colors.white,
                             fontSize: 16,
