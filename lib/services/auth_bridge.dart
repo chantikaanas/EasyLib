@@ -251,4 +251,40 @@ class AuthBridge {
     final token = await getToken();
     return token != null;
   }
+
+  static Future<Map<String, dynamic>> getUserDetails() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token'); // Ambil token yang tersimpan
+
+    if (token == null) {
+      return {
+        'success': false,
+        'message': 'User not authenticated',
+      };
+    }
+
+    final response = await http.get(
+      Uri.parse(
+          '$_baseUrl/user/profile'), // Endpoint API untuk mengambil data pengguna
+      headers: {
+        'Authorization':
+            'Bearer $token', // Kirimkan token di header untuk autentikasi
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      return {
+        'success': true,
+        'message': responseData['message'],
+        'data': responseData['data'],
+      };
+    } else {
+      return {
+        'success': false,
+        'message': 'Failed to fetch user data',
+      };
+    }
+  }
 }
