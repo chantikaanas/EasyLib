@@ -10,7 +10,7 @@ class GroqController {
       throw Exception('Groq API key is missing in .env file');
     }
 
-    _groq = Groq(apiKey: apiKey, model: "gemma2-9b-it");
+    _groq = Groq(apiKey: apiKey, model: "llama-3.1-8b-instant");
     _groq.startChat();
 
     // Set custom instructions with detailed policy information and FAQ responses
@@ -90,7 +90,8 @@ class GroqController {
           await _groq.sendMessage("Pertanyaan dari $userName: $message");
       return response.choices.first.message.content;
     } catch (e) {
-      return 'Maaf $userName, terjadi kesalahan saat menghubungi Groq AI. Silakan coba lagi nanti.';
+      return 'Maaf $userName, terjadi kesalahan: $e';
+      // return 'Maaf $userName, terjadi kesalahan saat menghubungi Groq AI. Silakan coba lagi nanti.';
     }
   }
 }
