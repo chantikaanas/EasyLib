@@ -1,10 +1,13 @@
+import 'package:easy_lib/models/book.dart';
 import 'package:easy_lib/models/category.dart';
 import 'package:easy_lib/services/auth_bridge.dart';
+import 'package:easy_lib/services/books_handler.dart';
 import 'package:easy_lib/services/catagories_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // <-------- DATA -------->
+// We'll replace this with data from the API
 final List<RecomendationData> recomendations = [
   RecomendationData('assets/images/books/book1.png', 'Bintang', 'Tere Liye'),
   RecomendationData('assets/images/books/book2.png', 'Bulan', 'Tere Liye'),
@@ -353,6 +356,38 @@ class RecommendationSection extends StatefulWidget {
 }
 
 class _RecommendationSectionState extends State<RecommendationSection> {
+  List<Book> recommendedBooks = [];
+  bool isLoading = true;
+  bool hasError = false;
+  String errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecommendations();
+  }
+
+  Future<void> _loadRecommendations() async {
+    try {
+      final books = await BookService.getRandomRecommendations(limit: 10);
+      if (mounted) {
+        setState(() {
+          recommendedBooks = books;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error loading recommendations: $e');
+      if (mounted) {
+        setState(() {
+          hasError = true;
+          errorMessage = e.toString();
+          isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -372,77 +407,194 @@ class _RecommendationSectionState extends State<RecommendationSection> {
               ),
               IconButton(
                   onPressed: () {
-                    print("Buku Recomendation");
+                    Navigator.of(context).pushNamed('/search');
                   },
                   icon: Icon(Icons.more_horiz)),
             ],
           ),
         ),
-        // <--- Recomendation List --->
+        // <--- Recommendation List --->
         SizedBox(
           height: 170,
-          child: ListView.separated(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            scrollDirection: Axis.horizontal,
-            itemCount: recomendations.length, // Add categories list
-            separatorBuilder: (context, index) => SizedBox(width: 16),
-            itemBuilder: (context, index) {
-              return RecomendationItem(
-                image: recomendations[index].image,
-                title: recomendations[index].title,
-              );
-            },
-          ),
+          child: isLoading
+              ? Center(child: CircularProgressIndicator())
+              : hasError
+                  ? Center(
+                      child: Text(
+                          'Tidak dapat memuat rekomendasi: $errorMessage',
+                          style: GoogleFonts.poppins(color: Colors.red)))
+                  : recommendedBooks.isEmpty
+                      ? Center(
+                          child: Text('Tidak ada rekomendasi buku saat ini',
+                              style: GoogleFonts.poppins()))
+                      : ListView.separated(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: recommendedBooks.length,
+                          separatorBuilder: (context, index) =>
+                              SizedBox(width: 16),
+                          itemBuilder: (context, index) {
+                            final book = recommendedBooks[index];
+                            return BookRecommendationItem(
+                              id: book.id,
+                              image: book.getImageUrl(),
+                              title: book.judul,
+                              author: book.pengarang,
+                            );
+                          },
+                        ),
         )
       ],
     );
   }
 }
 
-class RecomendationItem extends StatefulWidget {
+class BookRecommendationItem extends StatelessWidget {
+  final int id;
   final String image;
   final String title;
+  final String author;
 
-  const RecomendationItem({
+  const BookRecommendationItem({
     super.key,
+    required this.id,
     required this.image,
     required this.title,
+    required this.author,
   });
 
-  @override
-  State<RecomendationItem> createState() => _RecomendationItemState();
-}
-
-class _RecomendationItemState extends State<RecomendationItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.of(context)
-            .pushNamed('/bookdetails', arguments: widget.title);
+        // Navigate to book details page with book ID
+        Navigator.of(context).pushNamed('/bookdetails', arguments: id);
       },
       child: Container(
         width: 120,
         height: 170,
         decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  blurRadius: 2,
-                  spreadRadius: 1,
-                  offset: Offset(0, 1)),
-            ]),
-        child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              widget.image,
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 2,
+              spreadRadius: 1,
+              offset: Offset(0, 1),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
+                child: _buildImageWidget(),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    author,
+                    style: GoogleFonts.poppins(
+                      fontSize: 10,
+                      color: Colors.grey,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageWidget() {
+    // Check if image path is valid and not empty
+    if (image.isEmpty) {
+      return Image.asset(
+        'assets/images/books/placeholder.png',
+        width: double.infinity,
+        height: double.infinity,
+        fit: BoxFit.cover,
+      );
+    }
+
+    try {
+      if (image.startsWith('http')) {
+        print('Loading network image: $image');
+        return Image.network(
+          image,
+          width: double.infinity,
+          height: double.infinity,
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            );
+          },
+          errorBuilder: (context, error, stackTrace) {
+            print('Error loading network image: $error');
+            return Image.asset(
+              'assets/images/books/placeholder.png',
               width: double.infinity,
               height: double.infinity,
               fit: BoxFit.cover,
-            )),
-      ),
-    );
+            );
+          },
+        );
+      } else {
+        print('Loading asset image: $image');
+        return Image.asset(
+          image,
+          width: double.infinity,
+          height: double.infinity,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            print('Error loading asset image: $error');
+            return Image.asset(
+              'assets/images/books/placeholder.png',
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            );
+          },
+        );
+      }
+    } catch (e) {
+      print('General error loading image: $e');
+      return Image.asset(
+        'assets/images/books/placeholder.png',
+        width: double.infinity,
+        height: double.infinity,
+        fit: BoxFit.cover,
+      );
+    }
   }
 }

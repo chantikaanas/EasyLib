@@ -4,7 +4,7 @@ import 'package:easy_lib/editProfile.dart';
 import 'package:easy_lib/homepage.dart';
 import 'package:easy_lib/kartuanggota.dart';
 import 'package:easy_lib/mainPage.dart';
-import 'package:easy_lib/peminjaman.dart';
+import 'package:easy_lib/detailbook.dart';
 import 'package:easy_lib/pengembalian.dart';
 import 'package:easy_lib/profilePage.dart';
 import 'package:easy_lib/searchpage.dart';
