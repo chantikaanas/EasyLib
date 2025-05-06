@@ -53,7 +53,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
 
     try {
       final result = await BookService.getBookDetail(bookId);
-      
+
       if (result['success'] == false) {
         if (result['error'] == 'not_found') {
           // Book not found case
@@ -74,7 +74,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
         }
         return;
       }
-      
+
       // Success case - extract the Book object from the result
       if (mounted) {
         setState(() {
@@ -240,7 +240,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
 
   Widget _buildBookCoverImage() {
     final imageUrl = book!.getImageUrl();
-    
+
     // Only attempt to load from network if it's an HTTP URL
     if (imageUrl.startsWith('http')) {
       print('Attempting to load image from: $imageUrl');

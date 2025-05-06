@@ -36,14 +36,14 @@ class Book {
       return Book(
         id: json['id'] is String ? int.parse(json['id']) : json['id'],
         kodeBuku: json['kode_buku'] ?? '',
-        kategoriId: json['kategori_id'] is String 
-            ? int.parse(json['kategori_id']) 
+        kategoriId: json['kategori_id'] is String
+            ? int.parse(json['kategori_id'])
             : json['kategori_id'] ?? 0,
         judul: json['judul'] ?? '',
         pengarang: json['pengarang'] ?? '',
         penerbit: json['penerbit'] ?? '',
         tahunTerbit: json['tahun_terbit']?.toString() ?? '',
-        stokBuku: json['stok_buku'] is String 
+        stokBuku: json['stok_buku'] is String
             ? int.parse(json['stok_buku'])
             : json['stok_buku'] ?? 0,
         deskripsi: json['deskripsi'] ?? '',
@@ -62,12 +62,16 @@ class Book {
 
   String getImageUrl() {
     // Only use coverUrl if it's a complete URL
-    if (coverUrl != null && coverUrl!.isNotEmpty && coverUrl!.startsWith('http')) {
+    if (coverUrl != null &&
+        coverUrl!.isNotEmpty &&
+        coverUrl!.startsWith('http')) {
       return coverUrl!;
     }
-    
+
     // Only use cover if it looks like a valid path and doesn't contain local asset paths
-    if (cover != null && cover!.isNotEmpty && !cover!.contains('assets/images')) {
+    if (cover != null &&
+        cover!.isNotEmpty &&
+        !cover!.contains('assets/images')) {
       // If cover path looks like a server path (not a local asset path)
       if (!cover!.startsWith('http')) {
         // Construct a server URL
@@ -75,7 +79,7 @@ class Book {
       }
       return cover!;
     }
-    
+
     // Default placeholder within the app
     return 'assets/images/books/placeholder.png';
   }
