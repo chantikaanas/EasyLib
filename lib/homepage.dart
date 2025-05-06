@@ -425,8 +425,18 @@ class _RecommendationSectionState extends State<RecommendationSection> {
                           style: GoogleFonts.poppins(color: Colors.red)))
                   : recommendedBooks.isEmpty
                       ? Center(
-                          child: Text('Tidak ada rekomendasi buku saat ini',
-                              style: GoogleFonts.poppins()))
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.info_outline,
+                                  color: Colors.grey[400], size: 50),
+                              SizedBox(height: 16),
+                              Text('Tidak ada rekomendasi buku tersedia',
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.grey[600])),
+                            ],
+                          ),
+                        )
                       : ListView.separated(
                           padding: EdgeInsets.symmetric(horizontal: 16),
                           scrollDirection: Axis.horizontal,

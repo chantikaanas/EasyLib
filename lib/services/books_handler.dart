@@ -13,7 +13,7 @@ class BookService {
   static Future<List<Book>> getBooks({String? search, int? categoryId}) async {
     try {
       String url = '$baseUrl/books';
-
+      
       // Add query parameters if provided
       final queryParams = <String, String>{};
       if (search != null && search.isNotEmpty) {
@@ -22,13 +22,13 @@ class BookService {
       if (categoryId != null) {
         queryParams['category_id'] = categoryId.toString();
       }
-
+      
       if (queryParams.isNotEmpty) {
         url += '?' + Uri(queryParameters: queryParams).query;
       }
 
       print('Fetching books from: $url');
-
+      
       final response = await http.get(
         Uri.parse(url),
         headers: {
@@ -39,30 +39,28 @@ class BookService {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         List<dynamic> data;
-
-        // Check if the response structure includes a 'data' field
-        if (responseData is Map<String, dynamic> &&
-            responseData.containsKey('data')) {
+        
+        if (responseData is Map<String, dynamic> && responseData.containsKey('data')) {
           data = responseData['data'];
         } else if (responseData is List) {
           data = responseData;
         } else {
           throw Exception('Unexpected API response format');
         }
-
+        
         return data.map((json) => Book.fromJson(json)).toList();
       } else {
-        throw Exception('Failed to load books: ${response.statusCode}');
+        print('API error: ${response.statusCode}, ${response.body}');
+        return []; // Return empty list instead of dummy data
       }
     } catch (e) {
       print('Error in getBooks: $e');
-      // Return sample data for development
-      return _getSampleBooks();
+      return []; // Return empty list instead of dummy data
     }
   }
 
   // Get book details by ID
-  static Future<Book> getBookDetail(int id) async {
+  static Future<Map<String, dynamic>> getBookDetail(int id) async {
     try {
       print('Fetching book details for ID: $id');
 
@@ -74,112 +72,81 @@ class BookService {
       );
 
       print('Book detail response status: ${response.statusCode}');
-
+      
+      // Handle 404 Not Found specifically
+      if (response.statusCode == 404) {
+        print('Book with ID $id not found');
+        return {
+          'success': false,
+          'error': 'not_found',
+          'message': 'Buku tidak ditemukan'
+        };
+      }
+      
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-
+        
         // Extract book data based on API structure
         Map<String, dynamic> bookData;
-
-        if (responseData is Map<String, dynamic> &&
-            responseData.containsKey('data')) {
+        
+        if (responseData is Map<String, dynamic> && responseData.containsKey('data')) {
+          if (responseData['data'] == null) {
+            return {
+              'success': false,
+              'error': 'not_found',
+              'message': 'Buku tidak ditemukan'
+            };
+          }
           bookData = responseData['data'];
         } else if (responseData is Map<String, dynamic>) {
           bookData = responseData;
         } else {
-          throw Exception('Unexpected API response format');
+          return {
+            'success': false,
+            'error': 'unexpected_format',
+            'message': 'Format data tidak sesuai'
+          };
         }
-
-        print('Book data received: ${bookData.keys}');
-        return Book.fromJson(bookData);
+        
+        final book = Book.fromJson(bookData);
+        return {
+          'success': true,
+          'data': book
+        };
       } else {
-        throw Exception('Failed to load book details: ${response.statusCode}');
+        return {
+          'success': false,
+          'error': 'api_error',
+          'message': 'Error API: ${response.statusCode}'
+        };
       }
     } catch (e) {
       print('Error in getBookDetail: $e');
-      // For testing or when API fails, return a sample book
-      return _getSampleBook(id);
+      return {
+        'success': false,
+        'error': 'exception',
+        'message': 'Error: $e'
+      };
     }
-  }
-
-  // Helper method to get a sample book for testing or fallback
-  static Book _getSampleBook(int id) {
-    return Book(
-      id: id,
-      kodeBuku: 'BK00$id',
-      kategoriId: 1,
-      judul: 'Sample Book $id',
-      pengarang: 'Sample Author',
-      penerbit: 'Sample Publisher',
-      tahunTerbit: '2023',
-      stokBuku: 5,
-      deskripsi:
-          'This is a sample book description used when API calls fail or during development.',
-      cover: 'assets/images/books/placeholder.png',
-      kategori: {'nama_kategori': 'Sample Category'},
-    );
   }
 
   // Get random recommendations (limited number of books)
   static Future<List<Book>> getRandomRecommendations({int limit = 5}) async {
     try {
       final books = await getBooks();
-
+      
       if (books.isEmpty) {
-        return _getSampleBooks();
+        return []; // Return empty list instead of dummy data
       }
-
+      
       // Shuffle the books to get random recommendations
       books.shuffle();
-
+      
       // Return up to the requested limit
       return books.length <= limit ? books : books.sublist(0, limit);
     } catch (e) {
       print('Error in getRandomRecommendations: $e');
-      return _getSampleBooks();
+      return []; // Return empty list instead of dummy data
     }
-  }
-
-  // Provide sample books for development or when API fails
-  static List<Book> _getSampleBooks() {
-    print('Using sample books');
-    return [
-      Book(
-        id: 1,
-        kodeBuku: 'BK001',
-        kategoriId: 1,
-        judul: 'Bintang',
-        pengarang: 'Tere Liye',
-        penerbit: 'Gramedia',
-        tahunTerbit: '2020-01-01',
-        stokBuku: 10,
-        deskripsi: 'Novel fantasi tentang petualangan',
-        cover: 'assets/images/books/book1.png',
-      ),
-      Book(
-        id: 2,
-        kodeBuku: 'BK002',
-        kategoriId: 1,
-        judul: 'Bulan',
-        pengarang: 'Tere Liye',
-        penerbit: 'Gramedia',
-        tahunTerbit: '2020-02-01',
-        stokBuku: 8,
-        deskripsi: 'Lanjutan dari novel Bintang',
-        cover: 'assets/images/books/book2.png',
-      ),
-      Book(
-        id: 3,
-        kodeBuku: 'BK003',
-        kategoriId: 1,
-        judul: 'Bumi',
-        pengarang: 'Tere Liye',
-        penerbit: 'Gramedia',
-        tahunTerbit: '2020-03-01',
-        stokBuku: 5,
-        deskripsi: 'Bagian dari serial novel fantasi',
-        cover: 'assets/images/books/book3.png',
-      ),
-    ];
   }
 }
