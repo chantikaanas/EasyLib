@@ -61,26 +61,28 @@ class Book {
   }
 
   String getImageUrl() {
-    // Only use coverUrl if it's a complete URL
-    if (coverUrl != null &&
-        coverUrl!.isNotEmpty &&
-        coverUrl!.startsWith('http')) {
-      return coverUrl!;
-    }
-
-    // Only use cover if it looks like a valid path and doesn't contain local asset paths
-    if (cover != null &&
-        cover!.isNotEmpty &&
-        !cover!.contains('assets/images')) {
-      // If cover path looks like a server path (not a local asset path)
-      if (!cover!.startsWith('http')) {
-        // Construct a server URL
-        return 'http://localhost:8000/storage/covers/$cover';
+    try {
+      // Only use coverUrl if it's a complete URL and not empty
+      if (coverUrl != null && coverUrl!.isNotEmpty && coverUrl!.startsWith('http')) {
+        return coverUrl!;
       }
-      return cover!;
+      
+      // Only use cover if it looks like a valid path and doesn't contain local asset paths
+      if (cover != null && cover!.isNotEmpty && !cover!.contains('assets/images')) {
+        // If cover path looks like a server path (not a local asset path)
+        if (!cover!.startsWith('http')) {
+          // Construct a server URL
+          return 'http://localhost:8000/storage/covers/$cover';
+        }
+        return cover!;
+      }
+      
+      // If we reach here, use the default missing cover image
+      return 'assets/images/books/missing_cover.jpeg';
+    } catch (e) {
+      print('Error in getImageUrl: $e');
+      // Return the missing cover image in case of any exception
+      return 'assets/images/books/missing_cover.jpeg';
     }
-
-    // Default placeholder within the app
-    return 'assets/images/books/placeholder.png';
   }
 }

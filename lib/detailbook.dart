@@ -54,31 +54,20 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
     try {
       final result = await BookService.getBookDetail(bookId);
 
-      if (result['success'] == false) {
-        if (result['error'] == 'not_found') {
-          // Book not found case
-          if (mounted) {
-            setState(() {
-              isBookNotFound = true;
-              isLoading = false;
-            });
-          }
-        } else {
-          // Other error case
-          if (mounted) {
-            setState(() {
-              errorMessage = result['message'] ?? 'Terjadi kesalahan';
-              isLoading = false;
-            });
-          }
+      if (result['success'] == false && result['error'] == 'not_found') {
+        if (mounted) {
+          setState(() {
+            isBookNotFound = true;
+            isLoading = false;
+          });
         }
         return;
       }
 
-      // Success case - extract the Book object from the result
+      final bookDetails = result['data'] as Book;
       if (mounted) {
         setState(() {
-          book = result['data'] as Book;
+          book = bookDetails;
           isLoading = false;
         });
       }
@@ -120,10 +109,13 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.menu_book_outlined,
-            size: 80,
-            color: Colors.grey[400],
+          Image.asset(
+            'assets/images/books/not_found.png',
+            width: 120,
+            height: 120,
+            fit: BoxFit.contain,
+            errorBuilder: (ctx, err, _) =>
+                Icon(Icons.error_outline, size: 80, color: Colors.grey),
           ),
           SizedBox(height: 24),
           Text(
@@ -241,18 +233,31 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   Widget _buildBookCoverImage() {
     final imageUrl = book!.getImageUrl();
 
-    // Only attempt to load from network if it's an HTTP URL
     if (imageUrl.startsWith('http')) {
-      print('Attempting to load image from: $imageUrl');
       return Image.network(
         imageUrl,
         width: 180,
         height: 250,
         fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return SizedBox(
+            width: 180,
+            height: 250,
+            child: Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            ),
+          );
+        },
         errorBuilder: (ctx, error, _) {
-          print('Failed to load network image: $error');
+          print('Error loading book cover: $error');
           return Image.asset(
-            'assets/images/books/placeholder.png',
+            'assets/images/books/missing_cover.jpeg',
             width: 180,
             height: 250,
             fit: BoxFit.cover,
@@ -260,25 +265,18 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
         },
       );
     } else {
-      // For asset images and placeholders
       return Image.asset(
         imageUrl,
         width: 180,
         height: 250,
         fit: BoxFit.cover,
         errorBuilder: (ctx, error, _) {
-          print('Failed to load asset image: $error');
-          return Container(
+          print('Error loading asset book cover: $error');
+          return Image.asset(
+            'assets/images/books/missing_cover.jpeg',
             width: 180,
             height: 250,
-            color: Colors.grey[300],
-            child: Center(
-              child: Icon(
-                Icons.image_not_supported,
-                size: 50,
-                color: Colors.grey[500],
-              ),
-            ),
+            fit: BoxFit.cover,
           );
         },
       );

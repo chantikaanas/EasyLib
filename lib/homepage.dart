@@ -543,7 +543,7 @@ class BookRecommendationItem extends StatelessWidget {
     // Check if image path is valid and not empty
     if (image.isEmpty) {
       return Image.asset(
-        'assets/images/books/placeholder.png',
+        'assets/images/books/missing_cover.jpeg',
         width: double.infinity,
         height: double.infinity,
         fit: BoxFit.cover,
@@ -572,7 +572,7 @@ class BookRecommendationItem extends StatelessWidget {
           errorBuilder: (context, error, stackTrace) {
             print('Error loading network image: $error');
             return Image.asset(
-              'assets/images/books/placeholder.png',
+              'assets/images/books/missing_cover.jpeg',
               width: double.infinity,
               height: double.infinity,
               fit: BoxFit.cover,
@@ -589,7 +589,7 @@ class BookRecommendationItem extends StatelessWidget {
           errorBuilder: (context, error, stackTrace) {
             print('Error loading asset image: $error');
             return Image.asset(
-              'assets/images/books/placeholder.png',
+              'assets/images/books/missing_cover.jpeg',
               width: double.infinity,
               height: double.infinity,
               fit: BoxFit.cover,
@@ -600,7 +600,7 @@ class BookRecommendationItem extends StatelessWidget {
     } catch (e) {
       print('General error loading image: $e');
       return Image.asset(
-        'assets/images/books/placeholder.png',
+        'assets/images/books/missing_cover.jpeg',
         width: double.infinity,
         height: double.infinity,
         fit: BoxFit.cover,
