@@ -433,7 +433,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   void _showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         title: Text('Peminjaman Berhasil'),
         content: Text('Buku berhasil dipinjam!'),
         actions: [

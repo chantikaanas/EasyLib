@@ -1,173 +1,88 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: BookListPage(),
-    );
-  }
-}
+import 'package:easy_lib/models/book.dart';
+import 'package:easy_lib/services/books_handler.dart';
+import 'package:easy_lib/detailbook.dart'; // Import BookDetailsPage
 
 class BookListPage extends StatefulWidget {
-  final String? initialCategory;
+  final String? initialSearch;
+  final int? initialCategoryId;
+  final String? initialCategoryName;
 
-  const BookListPage({super.key, this.initialCategory});
+  const BookListPage({
+    super.key, 
+    this.initialSearch, 
+    this.initialCategoryId,
+    this.initialCategoryName,
+  });
+
   @override
   _BookListPageState createState() => _BookListPageState();
 }
 
 class _BookListPageState extends State<BookListPage> {
-  int selectedCategoryIndex = 0;
   TextEditingController searchController = TextEditingController();
   String searchQuery = '';
+  int selectedCategoryId = 0;
+  String selectedCategoryName = 'All';
+  bool isLoading = true;
+  List<Book> books = [];
 
   @override
   void initState() {
     super.initState();
-    // Handle initial category if provided
-    if (widget.initialCategory != null) {
-      selectedCategoryIndex = categories.indexWhere(
-          (category) => category['label'] == widget.initialCategory);
-      if (selectedCategoryIndex == -1) selectedCategoryIndex = 0;
+    
+    // Initialize from passed parameters
+    if (widget.initialSearch != null && widget.initialSearch!.isNotEmpty) {
+      searchController.text = widget.initialSearch!;
+      searchQuery = widget.initialSearch!;
     }
-
+    
+    if (widget.initialCategoryId != null) {
+      selectedCategoryId = widget.initialCategoryId!;
+    }
+    
+    if (widget.initialCategoryName != null && widget.initialCategoryName!.isNotEmpty) {
+      selectedCategoryName = widget.initialCategoryName!;
+    }
+    
     // Add search listener
     searchController.addListener(() {
       setState(() {
-        searchQuery = searchController.text.toLowerCase();
+        searchQuery = searchController.text;
       });
     });
+    
+    // Initial fetch of books
+    _fetchBooks();
   }
 
-  final List<Map<String, dynamic>> books = [
-    {
-      'title': 'Bintang',
-      'author': 'Tere Liye',
-      'year': '2017',
-      'isbn': '004123901233',
-      'image': 'assets/images/books/book1.png',
-      'categories': ['Sci-Fi', 'Fantasy']
-    },
-    {
-      'title': 'Bulan',
-      'author': 'Tere Liye',
-      'year': '2017',
-      'isbn': '004123901235',
-      'image': 'assets/images/books/book2.png',
-      'categories': ['Science']
-    },
-    {
-      'title': 'Bumi',
-      'author': 'Tere Liye',
-      'year': '2017',
-      'isbn': '004123901233',
-      'image': 'assets/images/books/book3.png',
-      'categories': ['Romance', 'Drama']
-    },
-    {
-      'title': 'Nebula',
-      'author': 'Tere Liye',
-      'year': '2018',
-      'isbn': '004123901111',
-      'image': 'assets/images/books/book1.png',
-      'categories': ['Sci-Fi']
-    },
-    {
-      'title': 'Sains dalam Berita',
-      'author': 'Ridwan Abdullah Sani',
-      'year': '2020',
-      'isbn': '004123901112',
-      'image': 'assets/images/books/book2.png',
-      'categories': ['Science']
-    },
-    {
-      'title': 'Dilan 1990',
-      'author': 'Pidi Baiq',
-      'year': '2014',
-      'isbn': '004123901113',
-      'image': 'assets/images/books/book3.png',
-      'categories': ['Romance']
-    },
-    {
-      'title': 'Gerbang Dialog Danur',
-      'author': 'Risa Saraswati',
-      'year': '2011',
-      'isbn': '004123901114',
-      'image': 'assets/images/books/book1.png',
-      'categories': ['Horror']
-    },
-    {
-      'title': 'Ronggeng Dukuh Paruk',
-      'author': 'Ahmad Tohari',
-      'year': '1982',
-      'isbn': '004123901115',
-      'image': 'assets/images/books/book2.png',
-      'categories': ['Drama']
-    },
-    {
-      'title': 'Harry Potter dan Batu Bertuah',
-      'author': 'J.K. Rowling (Terjemahan)',
-      'year': '2001',
-      'isbn': '004123901116',
-      'image': 'assets/images/books/book3.png',
-      'categories': ['Fantasy']
-    },
-    {
-      'title': 'Bung Karno: Penyambung Lidah Rakyat',
-      'author': 'Cindy Adams',
-      'year': '1965',
-      'isbn': '004123901117',
-      'image': 'assets/images/books/book1.png',
-      'categories': ['Biography']
-    },
-    {
-      'title': 'Sejarah Indonesia Modern',
-      'author': 'MC Ricklefs',
-      'year': '2001',
-      'isbn': '004123901118',
-      'image': 'assets/images/books/book2.png',
-      'categories': ['History']
-    },
-    {
-      'title': '5 cm',
-      'author': 'Donny Dhirgantoro',
-      'year': '2005',
-      'isbn': '004123901119',
-      'image': 'assets/images/books/book3.png',
-      'categories': ['Adventure']
-    },
-    {
-      'title': 'Koala Kumal',
-      'author': 'Raditya Dika',
-      'year': '2015',
-      'isbn': '004123901120',
-      'image': 'assets/images/books/book1.png',
-      'categories': ['Comedy']
-    },
-  ];
+  void _fetchBooks() async {
+    setState(() {
+      isLoading = true;
+    });
+    
+    try {
+      List<Book> fetchedBooks = await BookService.getBooks(
+        search: searchQuery,
+        categoryId: selectedCategoryId > 0 ? selectedCategoryId : null,
+      );
+      
+      setState(() {
+        books = fetchedBooks;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching books: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
-  final List<Map<String, dynamic>> categories = [
-    {'label': 'All', 'icon': Icons.category}, // Default: Show all books
-    {'label': 'Sci-Fi', 'icon': Icons.rocket},
-    {'label': 'Science', 'icon': Icons.school},
-    {'label': 'Romance', 'icon': Icons.favorite},
-    {'label': 'Horror', 'icon': Icons.mood_bad},
-    {'label': 'Drama', 'icon': Icons.theater_comedy},
-    {'label': 'Fantasy', 'icon': Icons.auto_fix_high},
-    {'label': 'Biography', 'icon': Icons.person},
-    {'label': 'History', 'icon': Icons.history},
-    {'label': 'Adventure', 'icon': Icons.explore},
-    {'label': 'Comedy', 'icon': Icons.sentiment_very_satisfied},
-  ];
+  void _handleSearch() {
+    _fetchBooks();
+  }
 
   @override
   void dispose() {
@@ -177,16 +92,6 @@ class _BookListPageState extends State<BookListPage> {
 
   @override
   Widget build(BuildContext context) {
-    // 🔍 Filter books based on selected category and search query
-    List<Map<String, dynamic>> filteredBooks = books.where((book) {
-      bool matchesCategory = selectedCategoryIndex == 0 ||
-          book['categories']
-              .contains(categories[selectedCategoryIndex]['label']);
-      bool matchesSearch = book['title'].toLowerCase().contains(searchQuery) ||
-          book['author'].toLowerCase().contains(searchQuery);
-      return matchesCategory && matchesSearch;
-    }).toList();
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -196,7 +101,7 @@ class _BookListPageState extends State<BookListPage> {
           },
         ),
         title: Text(
-          'List Buku',
+          'List Buku ${selectedCategoryName != 'All' ? '- $selectedCategoryName' : ''}',
           style: GoogleFonts.poppins(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -211,13 +116,17 @@ class _BookListPageState extends State<BookListPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔍 Search Bar
+            // Search Bar
             TextField(
               controller: searchController,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.search),
                 hintText: 'Telusuri Koleksi',
                 hintStyle: GoogleFonts.poppins(),
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: _handleSearch,
+                ),
                 filled: true,
                 fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
@@ -225,64 +134,65 @@ class _BookListPageState extends State<BookListPage> {
                   borderSide: BorderSide.none,
                 ),
               ),
+              onSubmitted: (value) {
+                _handleSearch();
+              },
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 16),
 
-            // 📜 Scrollable Category Section
-            SizedBox(
-              height: 50,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: List.generate(categories.length, (index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: ChoiceChip(
-                        label: Row(
-                          children: [
-                            Icon(categories[index]['icon'], size: 18),
-                            SizedBox(width: 5),
-                            Text(categories[index]['label']),
-                          ],
-                        ),
-                        selected: selectedCategoryIndex == index,
-                        onSelected: (bool selected) {
+            // Status indicator (if searching or filtering)
+            if (searchQuery.isNotEmpty || selectedCategoryId > 0)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Wrap(
+                  spacing: 8.0,
+                  children: [
+                    if (searchQuery.isNotEmpty)
+                      Chip(
+                        label: Text('Search: $searchQuery'),
+                        deleteIcon: Icon(Icons.close, size: 16),
+                        onDeleted: () {
                           setState(() {
-                            selectedCategoryIndex = index;
+                            searchQuery = '';
+                            searchController.clear();
                           });
+                          _fetchBooks();
                         },
-                        selectedColor: Colors.blue.shade100,
-                        backgroundColor: Colors.white,
-                        labelStyle: TextStyle(
-                          color: selectedCategoryIndex == index
-                              ? Colors.blue
-                              : Colors.black,
-                        ),
                       ),
-                    );
-                  }),
+                    if (selectedCategoryId > 0)
+                      Chip(
+                        label: Text('Category: $selectedCategoryName'),
+                        deleteIcon: Icon(Icons.close, size: 16),
+                        onDeleted: () {
+                          setState(() {
+                            selectedCategoryId = 0;
+                            selectedCategoryName = 'All';
+                          });
+                          _fetchBooks();
+                        },
+                      ),
+                  ],
                 ),
               ),
-            ),
 
-            SizedBox(height: 10),
-
-            // 📚 Book List
+            // Book List
             Expanded(
-              child: filteredBooks.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No books available in this category',
-                        style: GoogleFonts.poppins(fontSize: 16),
-                      ),
-                    )
-                  : ListView.separated(
-                      itemCount: filteredBooks.length,
-                      separatorBuilder: (_, __) => Divider(),
-                      itemBuilder: (context, index) {
-                        return _bookItem(filteredBooks[index]);
-                      },
-                    ),
+              child: isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : books.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No books found',
+                            style: GoogleFonts.poppins(fontSize: 16),
+                          ),
+                        )
+                      : ListView.separated(
+                          itemCount: books.length,
+                          separatorBuilder: (_, __) => Divider(),
+                          itemBuilder: (context, index) {
+                            return _bookItem(books[index]);
+                          },
+                        ),
             ),
           ],
         ),
@@ -290,17 +200,30 @@ class _BookListPageState extends State<BookListPage> {
     );
   }
 
-  Widget _bookItem(Map<String, dynamic> book) {
+  Widget _bookItem(Book book) {
     return ListTile(
       contentPadding: EdgeInsets.all(8.0),
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(10),
-        child: Image.asset(book['image']!, height: 180, fit: BoxFit.cover),
+        child: Image.network(
+          book.getImageUrl(),
+          height: 80,
+          width: 60,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              height: 80,
+              width: 60,
+              color: Colors.grey[300],
+              child: Icon(Icons.book, color: Colors.grey[600]),
+            );
+          },
+        ),
       ),
       title: Text(
-        book['title']!,
+        book.judul,
         style: GoogleFonts.poppins(
-          fontSize: 18,
+          fontSize: 16,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -308,19 +231,32 @@ class _BookListPageState extends State<BookListPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            book['author']!,
+            book.pengarang,
             style: GoogleFonts.poppins(fontSize: 14),
           ),
           Text(
-            'Tahun Terbit: ${book['year']}',
+            'Tahun Terbit: ${book.tahunTerbit}',
             style: GoogleFonts.poppins(fontSize: 14),
           ),
           Text(
-            book['isbn']!,
+            'Stok: ${book.stokBuku}',
             style: GoogleFonts.poppins(fontSize: 14),
           ),
         ],
       ),
+      // Navigate to the book details page when item is tapped
+      onTap: () {
+        // Navigate to BookDetailsPage and pass the book ID as argument
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BookDetailsPage(),
+            settings: RouteSettings(
+              arguments: book.id,  // Passing the book ID to the details page
+            ),
+          ),
+        );
+      },
     );
   }
 }

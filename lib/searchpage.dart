@@ -1,119 +1,140 @@
-import 'package:easy_lib/booklist.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:easy_lib/models/category.dart';
+import 'package:easy_lib/services/catagories_handler.dart';
+import 'package:easy_lib/booklist.dart'; // Adjust import path as needed
 
-class SearchScreen extends StatelessWidget {
-  final List<String> history = ["Bintang", "Nebula", "Hujan", "Matahari"];
-  final List<String> trending = [
-    "Bintang",
-    "Nebula",
-    "Hujan",
-    "Matahari",
-    "Bulan"
-  ];
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
 
-  final List<Map<String, dynamic>> categories = [
-    {'label': 'All', 'icon': Icons.category},
-    {'label': 'Sci-Fi', 'icon': Icons.rocket},
-    {'label': 'Science', 'icon': Icons.school},
-    {'label': 'Romance', 'icon': Icons.favorite},
-    {'label': 'Horror', 'icon': Icons.mood_bad},
-    {'label': 'Drama', 'icon': Icons.theater_comedy},
-    {'label': 'Fantasy', 'icon': Icons.auto_fix_high},
-    {'label': 'Biography', 'icon': Icons.person},
-    {'label': 'History', 'icon': Icons.history},
-    {'label': 'Adventure', 'icon': Icons.explore},
-    {'label': 'Comedy', 'icon': Icons.sentiment_very_satisfied},
-  ];
+  @override
+  _SearchScreenState createState() => _SearchScreenState();
+}
 
-  SearchScreen({super.key});
+class _SearchScreenState extends State<SearchScreen> {
+  final TextEditingController searchController = TextEditingController();
+  List<Category> categories = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCategories();
+  }
+
+  // Function to fetch categories
+  void _fetchCategories() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      
+      List<Category> fetchedCategories = await CategoryService.getCategories();
+      
+      setState(() {
+        categories = fetchedCategories;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching categories: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  // Function to navigate to BookListPage when user searches or selects a category
+  void _navigateToBookList({String? searchQuery, int? categoryId, String? categoryName}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BookListPage(
+          initialSearch: searchQuery,
+          initialCategoryId: categoryId,
+          initialCategoryName: categoryName,
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Distribute items between rows (alternating)
-    List<List<Map<String, dynamic>>> rowData = [[], []];
-    for (int i = 0; i < categories.length; i++) {
-      rowData[i % 2].add(categories[i]);
-    }
-
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         title: Text(
           'Search',
           style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w600),
         ),
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search, size: 24),
-                hintText: 'Telusuri koleksi',
-                hintStyle: GoogleFonts.poppins(fontSize: 16),
-                suffixIcon: const Icon(Icons.filter_list, size: 24),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25.0),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: Colors.grey[200],
-              ),
-            ),
-
-            // Tambahkan jarak sebelum judul "Riwayat Anda"
-            const SizedBox(height: 25),
-            buildSectionTitle('Riwayat Anda'),
-            const SizedBox(height: 10), // Tambah jarak antara judul dan isi
-            buildChips(history),
-
-            // Tambahkan jarak sebelum judul "Cari Kategori"
-            const SizedBox(height: 30),
-            buildSectionTitle('Cari Kategori'),
-            const SizedBox(
-                height: 12), // Tambah jarak antara judul dan tombol kategori
-
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: categories
-                        .sublist(0, categories.length ~/ 1.5)
-                        .map((category) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 10.0),
-                        child: _buildCategoryItem(
-                            context, category['icon'], category['label']),
-                      );
-                    }).toList(),
+                  // Search input field
+                  TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.search, size: 24),
+                      hintText: 'Telusuri koleksi',
+                      hintStyle: GoogleFonts.poppins(fontSize: 16),
+                      suffixIcon: const Icon(Icons.filter_list, size: 24),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                    ),
+                    onSubmitted: (value) {
+                      if (value.isNotEmpty) {
+                        _navigateToBookList(searchQuery: value);
+                      }
+                    },
                   ),
-                  const SizedBox(height: 10), // Jarak antar baris
-                  Row(
-                    children: categories
-                        .sublist(categories.length ~/ 2)
-                        .map((category) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 10.0),
-                        child: _buildCategoryItem(
-                            context, category['icon'], category['label']),
-                      );
-                    }).toList(),
-                  ),
+                  
+                  const SizedBox(height: 25),
+                  buildSectionTitle('Pilih Kategori'),
+                  const SizedBox(height: 10),
+                  
+                  // Horizontal scrollable categories
+                  categories.isEmpty
+                    ? Center(child: Text('No categories available'))
+                    : SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: categories.map((category) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 10.0),
+                              child: _buildCategoryItem(
+                                context,
+                                category.icon,
+                                category.nama_kategori,
+                                category.id,
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
                 ],
               ),
             ),
-
-            // Tambahkan jarak sebelum judul "Pencarian Trending"
-            const SizedBox(height: 35),
-            buildSectionTitle('Pencarian Trending'),
-            const SizedBox(height: 10), // Tambah jarak antara judul dan isi
-            buildChips(trending),
-          ],
-        ),
-      ),
     );
   }
 
@@ -124,33 +145,14 @@ class SearchScreen extends StatelessWidget {
     );
   }
 
-  Widget buildChips(List<String> items) {
-    return Wrap(
-      spacing: 10, // Tambah jarak antar chip
-      runSpacing: 8, // Tambah jarak antar baris chip
-      children: items
-          .map((item) => Chip(
-                label: Text(
-                  item,
-                  style: GoogleFonts.poppins(
-                      fontSize: 14, fontWeight: FontWeight.w500),
-                ),
-                backgroundColor: Colors.grey[200],
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 8), // Tambah padding
-              ))
-          .toList(),
-    );
-  }
-
-  Widget _buildCategoryItem(BuildContext context, IconData icon, String label) {
+  // Category item widget
+  Widget _buildCategoryItem(
+      BuildContext context, IconData icon, String label, int categoryId) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BookListPage(initialCategory: label),
-          ),
+        _navigateToBookList(
+          categoryId: categoryId,
+          categoryName: label,
         );
       },
       child: Container(

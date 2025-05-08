@@ -14,7 +14,6 @@ class BookService {
     try {
       String url = '$baseUrl/books';
 
-      // Add query parameters if provided
       final queryParams = <String, String>{};
       if (search != null && search.isNotEmpty) {
         queryParams['search'] = search;
@@ -43,8 +42,6 @@ class BookService {
         if (responseData is Map<String, dynamic> &&
             responseData.containsKey('data')) {
           data = responseData['data'];
-        } else if (responseData is List) {
-          data = responseData;
         } else {
           throw Exception('Unexpected API response format');
         }
@@ -52,11 +49,11 @@ class BookService {
         return data.map((json) => Book.fromJson(json)).toList();
       } else {
         print('API error: ${response.statusCode}, ${response.body}');
-        return []; // Return empty list instead of dummy data
+        return [];
       }
     } catch (e) {
       print('Error in getBooks: $e');
-      return []; // Return empty list instead of dummy data
+      return [];
     }
   }
 
