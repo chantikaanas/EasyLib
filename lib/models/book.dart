@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 class Book {
   final int id;
   final String kodeBuku;
@@ -60,15 +62,64 @@ class Book {
     }
   }
 
+  // String getImageUrl() {
+  //   try {
+  //     final baseUrl =
+  //         Platform.isAndroid ? 'http://10.0.2.2:8000' : 'http://localhost:8000';
+
+  //     // First priority: complete URL in coverUrl
+  //     if (coverUrl != null && coverUrl!.isNotEmpty) {
+  //       final cleanUrl = coverUrl!.trim();
+
+  //       // If it's already a complete URL starting with http
+  //       if (cleanUrl.startsWith('http')) {
+  //         print('Using complete coverUrl: $cleanUrl');
+  //         return cleanUrl;
+  //       }
+
+  //       // Handle relative storage URL
+  //       if (cleanUrl.startsWith('/storage/')) {
+  //         final url = '$baseUrl$cleanUrl';
+  //         print('Using storage URL: $url');
+  //         return url;
+  //       }
+
+  //       // Handle other relative URLs
+  //       final url = '$baseUrl/storage/$cleanUrl';
+  //       print('Using constructed URL: $url');
+  //       return url;
+  //     }
+
+  //     // Second priority: cover filename
+  //     if (cover != null && cover!.isNotEmpty) {
+  //       final cleanCover = cover!.trim();
+  //       final url = '$baseUrl/storage/img/books/cover/$cleanCover';
+  //       print('Using cover URL: $url');
+  //       return url;
+  //     }
+
+  //     // Fallback to default image
+  //     print('Using default image');
+  //     return 'assets/images/books/missing_cover.jpeg';
+  //   } catch (e) {
+  //     print('Error in getImageUrl: $e');
+  //     return 'assets/images/books/missing_cover.jpeg';
+  //   }
+  // }
+
   String getImageUrl() {
     try {
       // Only use coverUrl if it's a complete URL and not empty
-      if (coverUrl != null && coverUrl!.isNotEmpty && coverUrl!.startsWith('http')) {
+      if (coverUrl != null &&
+          coverUrl!.isNotEmpty &&
+          coverUrl!.startsWith('http')) {
         return coverUrl!;
       }
-      
+
       // Only use cover if it looks like a valid path and doesn't contain local asset paths
-      if (cover != null && cover!.isNotEmpty && !cover!.contains('assets/images')) {
+      if (cover != null &&
+          cover!.isNotEmpty &&
+          !cover!.contains('assets/images')) {
         // If cover path looks like a server path (not a local asset path)
         if (!cover!.startsWith('http')) {
           // Construct a server URL
@@ -76,7 +127,7 @@ class Book {
         }
         return cover!;
       }
-      
+
       // If we reach here, use the default missing cover image
       return 'assets/images/books/missing_cover.jpeg';
     } catch (e) {

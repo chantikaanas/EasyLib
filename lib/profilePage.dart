@@ -1,3 +1,4 @@
+import 'package:easy_lib/services/peminjaman_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'services/auth_bridge.dart'; // Import AuthBridge
@@ -11,6 +12,7 @@ class ProfilePage extends StatefulWidget {
 
 class _profilePageState extends State<ProfilePage> {
   Map<String, dynamic>? userData;
+  List<Map<String, dynamic>> borrowedBooks = [];
   bool isLoading = true;
 
   @override
@@ -22,19 +24,29 @@ class _profilePageState extends State<ProfilePage> {
   Future<void> _loadUserData() async {
     final isAuth = await AuthBridge.isAuthenticated();
     if (!isAuth) {
-      // If not authenticated, redirect to login
       if (mounted) {
         Navigator.of(context).pushReplacementNamed('/login');
       }
       return;
     }
 
-    final user = await AuthBridge.getCurrentUser();
-    if (mounted) {
-      setState(() {
-        userData = user;
-        isLoading = false;
-      });
+    try {
+      final user = await AuthBridge.getCurrentUser();
+      final books = await PeminjamanService.getBorrowedBooks();
+
+      if (mounted) {
+        setState(() {
+          userData = user;
+          borrowedBooks = books;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load data')),
+        );
+      }
     }
   }
 
@@ -93,10 +105,25 @@ class _profilePageState extends State<ProfilePage> {
                           child: ListView(
                             padding: EdgeInsets.only(bottom: 90),
                             children: [
-                              Column(children: [
-                                BookCard(),
-                                SizedBox(height: 10),
-                              ])
+                              if (borrowedBooks.isEmpty)
+                                Center(
+                                  child: Text(
+                                    'Kamu belum meminjam buku',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                )
+                              else
+                                ...borrowedBooks
+                                    .map((book) => Column(
+                                          children: [
+                                            BookCard(book: book),
+                                            SizedBox(height: 10),
+                                          ],
+                                        ))
+                                    .toList(),
                             ],
                           )),
                     )
@@ -265,13 +292,71 @@ class _HeaderState extends State<Header> {
 }
 
 class BookCard extends StatelessWidget {
-  const BookCard({super.key});
+  final Map<String, dynamic> book;
+
+  const BookCard({super.key, required this.book});
+
+  String _formatDate(String? date) {
+    if (date == null || date.isEmpty) return '-';
+    try {
+      final DateTime parsedDate = DateTime.parse(date);
+      return '${parsedDate.day.toString().padLeft(2, '0')}/${parsedDate.month.toString().padLeft(2, '0')}/${parsedDate.year}';
+    } catch (e) {
+      return date;
+    }
+  }
+
+  Widget _buildBookCover(String? imagePath) {
+    if (imagePath == null || imagePath.isEmpty) {
+      return Image.asset(
+        'assets/images/books/missing_cover.jpeg',
+        width: 105,
+        height: 150,
+        fit: BoxFit.cover,
+      );
+    }
+
+    final imageUrl = '${PeminjamanService.baseUrl}/storage/$imagePath';
+
+    return Image.network(
+      imageUrl,
+      width: 105,
+      height: 150,
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return Center(
+          child: CircularProgressIndicator(
+            value: loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded /
+                    loadingProgress.expectedTotalBytes!
+                : null,
+          ),
+        );
+      },
+      errorBuilder: (context, error, stackTrace) {
+        print('Error loading book cover: $error');
+        return Image.asset(
+          'assets/images/books/missing_cover.jpeg',
+          width: 105,
+          height: 150,
+          fit: BoxFit.cover,
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final bookData = book['buku'] ?? {};
+    final tanggalPinjam = DateTime.parse(book['tanggal_pinjam']);
+    // PENGEMBALIAN MAX 90 HARI (3 BULAN)
+    final batasPengembalian = tanggalPinjam.add(Duration(days: 90));
+    final isLate = DateTime.now().isAfter(batasPengembalian);
+
     return InkWell(
       onTap: () {
-        Navigator.of(context).pushNamed('/pengembalian');
+        Navigator.of(context).pushNamed('/pengembalian', arguments: book);
       },
       child: Container(
         padding: EdgeInsets.all(10),
@@ -289,35 +374,38 @@ class BookCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Image.asset('assets/images/books/book1.png', width: 105),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: _buildBookCover(bookData['gambar']),
+            ),
             SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Bintang',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    bookData['judul'] ?? 'Unknown',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Text(
-                  'Tere Liye',
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                  Text(
+                    bookData['pengarang'] ?? 'Unknown',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                Text(
-                  'Tahun Terbit: 2015',
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                  Text(
+                    'Tahun Terbit: ${_formatDate(bookData['tahun_terbit'])}',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                SizedBox(height: 10),
-                Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                  SizedBox(height: 10),
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -330,19 +418,22 @@ class BookCard extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                          color: Colors.red[400],
+                          color: isLate ? Colors.red[400] : Colors.green[400],
                           borderRadius: BorderRadius.circular(5),
                         ),
                         child: Text(
-                          '12/Jan/2026',
+                          '${batasPengembalian.day}/${batasPengembalian.month}/${batasPengembalian.year}',
                           style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                    ]),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
