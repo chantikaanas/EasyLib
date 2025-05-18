@@ -1,7 +1,8 @@
 import 'package:easy_lib/services/peminjaman_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'services/auth_bridge.dart'; // Import AuthBridge
+import 'services/auth_bridge.dart';
+import 'dart:io' show Platform;
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -316,34 +317,78 @@ class BookCard extends StatelessWidget {
       );
     }
 
-    final imageUrl = '${PeminjamanService.baseUrl}/storage/$imagePath';
-
-    return Image.network(
-      imageUrl,
-      width: 105,
-      height: 150,
-      fit: BoxFit.cover,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return Center(
-          child: CircularProgressIndicator(
-            value: loadingProgress.expectedTotalBytes != null
-                ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes!
-                : null,
-          ),
-        );
-      },
-      errorBuilder: (context, error, stackTrace) {
-        print('Error loading book cover: $error');
-        return Image.asset(
-          'assets/images/books/missing_cover.jpeg',
+    try {
+      if (imagePath.startsWith('http')) {
+        print('Loading network image: $imagePath');
+        return Image.network(
+          imagePath,
           width: 105,
           height: 150,
           fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            );
+          },
+          errorBuilder: (context, error, stackTrace) {
+            print('Error loading network image: $error');
+            return Image.asset(
+              'assets/images/books/missing_cover.jpeg',
+              width: 105,
+              height: 150,
+              fit: BoxFit.cover,
+            );
+          },
         );
-      },
-    );
+      } else {
+        // If not a URL, construct the server URL
+        final baseUrl = Platform.isAndroid
+            ? 'http://10.0.2.2:8000'
+            : 'http://localhost:8000';
+        final imageUrl = '$baseUrl/$imagePath';
+        print('Loading constructed URL image: $imageUrl');
+        return Image.network(
+          imageUrl,
+          width: 105,
+          height: 150,
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            );
+          },
+          errorBuilder: (context, error, stackTrace) {
+            print('Error loading network image: $error');
+            return Image.asset(
+              'assets/images/books/missing_cover.jpeg',
+              width: 105,
+              height: 150,
+              fit: BoxFit.cover,
+            );
+          },
+        );
+      }
+    } catch (e) {
+      print('General error loading image: $e');
+      return Image.asset(
+        'assets/images/books/missing_cover.jpeg',
+        width: 105,
+        height: 150,
+        fit: BoxFit.cover,
+      );
+    }
   }
 
   @override
@@ -356,7 +401,9 @@ class BookCard extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.of(context).pushNamed('/pengembalian', arguments: book);
+        print("isi Data: $bookData");
+        Navigator.of(context)
+            .pushNamed('/bookdetails', arguments: bookData['id']);
       },
       child: Container(
         padding: EdgeInsets.all(10),
@@ -376,7 +423,7 @@ class BookCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: _buildBookCover(bookData['gambar']),
+              child: _buildBookCover(bookData['cover']),
             ),
             SizedBox(width: 10),
             Expanded(
