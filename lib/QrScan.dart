@@ -44,17 +44,18 @@ class _QrScanPageState extends State<QrScanPage> {
         // Pause scanning while processing
         controller.pauseCamera();
 
-        // Validate QR code
-        final isValid =
+        // Validate QR code and get book data
+        final bookData =
             await QrValidationService.validateQrCode(scanData.code!);
 
         if (mounted) {
-          if (isValid) {
-            // Navigate to book borrowing page
-            Navigator.pushReplacementNamed(
+          if (bookData != null) {
+            print('Book data: $bookData');
+            // Navigate to book details page with book data
+            Navigator.pushNamed(
               context,
               '/bookdetails',
-              arguments: {'bookId': scanData.code},
+              arguments: bookData,
             );
           } else {
             // Show error dialog
@@ -69,31 +70,17 @@ class _QrScanPageState extends State<QrScanPage> {
                     children: [
                       Icon(Icons.error_outline, color: Colors.red),
                       SizedBox(width: 10),
-                      Text(
-                        'QR Code Tidak Valid',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text('Buku Tidak Ditemukan'),
                     ],
                   ),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.error_outline,
-                        size: 100,
-                        color: Colors.red,
-                      ),
+                      Icon(Icons.error_outline, size: 100, color: Colors.red),
                       SizedBox(height: 16),
                       Text(
-                        'QR Code yang dipindai tidak valid, pastikan QR Code yang dipindai adalah QR Code yang valid.',
+                        'QR Code yang dipindai tidak terdaftar dalam database. Silakan coba QR Code lain.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[700],
-                        ),
                       ),
                     ],
                   ),
@@ -108,20 +95,13 @@ class _QrScanPageState extends State<QrScanPage> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       ),
                       child: Text(
                         'OK',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ],
-                  actionsPadding: EdgeInsets.all(16),
                 );
               },
             );
@@ -129,11 +109,5 @@ class _QrScanPageState extends State<QrScanPage> {
         }
       }
     });
-  }
-
-  @override
-  void dispose() {
-    controller?.dispose();
-    super.dispose();
   }
 }

@@ -3,27 +3,24 @@ import 'package:http/http.dart' as http;
 import 'dart:io' show Platform;
 
 class QrValidationService {
-  static String baseUrl = Platform.isAndroid
-      ? 'http://10.0.2.2:8000/api'
-      : 'http://localhost:8000/api';
-
-  static Future<bool> validateQrCode(String qrCode) async {
+  static Future<String?> validateQrCode(String qrCode) async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/detail/$qrCode'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      );
+      // Clean and validate QR code value
+      final cleanQrCode = qrCode.trim();
+      if (cleanQrCode.isEmpty) return null;
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        return data['exists'] == true;
+      // Try to parse as integer if possible
+      int? bookId;
+      try {
+        bookId = int.parse(cleanQrCode);
+        return cleanQrCode; // Return the QR code value if it's a valid integer
+      } catch (e) {
+        print('QR code is not a valid integer: $cleanQrCode');
+        return null;
       }
-      return false;
     } catch (e) {
       print('Error validating QR code: $e');
-      return false;
+      return null;
     }
   }
 }
